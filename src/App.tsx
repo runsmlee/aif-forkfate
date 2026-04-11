@@ -1,13 +1,17 @@
-import { useEffect } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import { RepoInput } from './components/RepoInput';
 import { SurvivalScore } from './components/SurvivalScore';
-import { EvolutionTree } from './components/EvolutionTree';
 import { ForkDetailPanel } from './components/ForkDetailPanel';
 import { InfluenceBreakdown } from './components/InfluenceBreakdown';
 import { ActivityLegend } from './components/ActivityLegend';
 import { ShareCard } from './components/ShareCard';
 import { useRepoStore } from './stores/repo-store';
 import type { ForkData } from './lib/types';
+
+// Lazy-load D3-heavy component to reduce initial bundle size
+const EvolutionTree = lazy(() =>
+  import('./components/EvolutionTree').then((mod) => ({ default: mod.EvolutionTree }))
+);
 
 export default function App(): JSX.Element {
   const repo = useRepoStore((s) => s.repo);
@@ -53,7 +57,7 @@ export default function App(): JSX.Element {
                 </svg>
               </div>
               <h1 className="text-lg font-bold text-gray-900 dark:text-white tracking-tight">
-                ForkFate
+                CommitCasualty
               </h1>
             </div>
             {hasData && (
@@ -100,17 +104,17 @@ export default function App(): JSX.Element {
           <div className="text-center mb-10 md:mb-16 pt-8 md:pt-16">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-50 dark:bg-brand/10 text-brand dark:text-brand-light text-xs font-medium mb-6">
               <span className="w-1.5 h-1.5 rounded-full bg-brand animate-pulse" aria-hidden="true" />
-              Open-source fork analysis
+              Instantly quantify open-source reliability
             </div>
             <h2 className="text-3xl md:text-5xl font-extrabold text-gray-900 dark:text-white mb-4 tracking-tight leading-tight">
-              Reveal Your Fork{' '}
+              Is Your Dependency{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand to-brand-dark dark:from-brand-light dark:to-brand">
-                Survival Score
+                a Casualty?
               </span>
             </h2>
             <p className="text-base md:text-lg text-gray-500 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed">
-              Paste any GitHub repo URL and discover which forks are thriving,
-              evolving independently, or fading away.
+              Paste any GitHub repo URL and instantly see its fork survival score —
+              the definitive metric for open-source project health and momentum.
             </p>
           </div>
         )}
@@ -118,6 +122,7 @@ export default function App(): JSX.Element {
         {/* Input Section */}
         <section aria-label="Repository analysis input" className={hasData || loading ? 'mb-8' : 'mb-10 md:mb-16'}>
           <RepoInput />
+          {!hasData && !loading && <ExampleRepos />}
         </section>
 
         {/* Loading skeleton for the full page */}
@@ -161,7 +166,19 @@ export default function App(): JSX.Element {
               <div className="mb-4">
                 <ActivityLegend />
               </div>
-              <EvolutionTree />
+              <Suspense fallback={
+                <div className="card" aria-busy="true">
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="skeleton h-6 w-40" />
+                  </div>
+                  <div className="skeleton h-96 w-full" />
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-4 text-center">
+                    Loading evolutionary tree...
+                  </p>
+                </div>
+              }>
+                <EvolutionTree />
+              </Suspense>
             </section>
 
             {/* Share Card */}
@@ -199,7 +216,7 @@ export default function App(): JSX.Element {
       <footer className="border-t border-gray-200/60 dark:border-gray-800/60 mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-2">
           <p className="text-sm text-gray-400 dark:text-gray-500">
-            ForkFate — Open-source fork survival analysis.
+            CommitCasualty — Instantly quantify open-source reliability.
           </p>
           <p className="text-xs text-gray-300 dark:text-gray-600">
             Data from GitHub API
@@ -209,6 +226,45 @@ export default function App(): JSX.Element {
 
       {/* Detail Panel */}
       <ForkDetailPanel />
+    </div>
+  );
+}
+
+function ExampleRepos(): JSX.Element {
+  const analyze = useRepoStore((s) => s.analyze);
+
+  const examples = [
+    { owner: 'facebook', repo: 'react', label: 'React', lang: 'JavaScript' },
+    { owner: 'vercel', repo: 'next.js', label: 'Next.js', lang: 'TypeScript' },
+    { owner: 'denoland', repo: 'deno', label: 'Deno', lang: 'Rust' },
+    { owner: 'tailwindlabs', repo: 'tailwindcss', label: 'Tailwind CSS', lang: 'CSS' },
+  ] as const;
+
+  return (
+    <div className="mt-8 text-center">
+      <p className="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-widest font-semibold mb-4">
+        Try an example
+      </p>
+      <div className="flex flex-wrap justify-center gap-2">
+        {examples.map((ex) => (
+          <button
+            key={ex.label}
+            onClick={() => analyze(`https://github.com/${ex.owner}/${ex.repo}`)}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl
+              bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700
+              hover:border-brand/40 dark:hover:border-brand/40
+              hover:shadow-sm transition-all duration-200
+              focus:ring-2 focus:ring-brand/40 focus:ring-offset-1 dark:focus:ring-offset-gray-900
+              text-sm font-medium text-gray-700 dark:text-gray-300
+              active:scale-[0.98]"
+            aria-label={`Analyze ${ex.label} repository`}
+          >
+            <span className="w-2 h-2 rounded-full bg-brand/60" aria-hidden="true" />
+            {ex.label}
+            <span className="text-xs text-gray-400 dark:text-gray-500 font-normal">{ex.lang}</span>
+          </button>
+        ))}
+      </div>
     </div>
   );
 }

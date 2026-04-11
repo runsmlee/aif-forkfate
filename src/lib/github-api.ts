@@ -157,9 +157,11 @@ export async function fetchForks(
     );
     const hasPushedAfterCreation = fork.pushed_at && new Date(fork.pushed_at) > createdDate;
 
-    // Heuristic commit count based on activity signals
+    // Deterministic heuristic commit count based on activity signals
+    // Uses fork ID as a stable seed for variation instead of Math.random()
+    const stableVariation = ((fork.id % 20) + 1);
     const estimatedCommits = hasPushedAfterCreation
-      ? Math.max(1, Math.floor(fork.stargazers_count * 0.5 + Math.random() * 20))
+      ? Math.max(1, Math.floor(fork.stargazers_count * 0.5 + stableVariation))
       : 1;
 
     const commitFrequency = hasPushedAfterCreation

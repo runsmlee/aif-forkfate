@@ -101,7 +101,7 @@ export function SurvivalScore(): JSX.Element {
         </div>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-4 max-w-md mx-auto leading-relaxed">
           of forks from <span className="font-semibold text-gray-700 dark:text-gray-300">{repo.fullName}</span> show
-          sustained evolutionary activity
+          sustained evolutionary activity — a key indicator of open-source reliability
         </p>
       </div>
     </div>

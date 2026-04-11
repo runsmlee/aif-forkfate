@@ -9,10 +9,10 @@ export function ShareCard(): JSX.Element {
   const handleCopy = useCallback(async () => {
     if (!repo || !scoreResult) return;
 
-    const shareText = `🐛 ForkFate Report: ${repo.fullName}\n` +
+    const shareText = `📊 CommitCasualty Report: ${repo.fullName}\n` +
       `Survival Score: ${scoreResult.score}%\n` +
       `Total Forks: ${scoreResult.totalForks} | Active: ${scoreResult.activeForks}\n` +
-      `Analyze your repo: forkfate.dev`;
+      `Quantify your repo: commitcasualty.dev`;
 
     try {
       await navigator.clipboard.writeText(shareText);
@@ -48,7 +48,7 @@ export function ShareCard(): JSX.Element {
         <div className="flex items-start justify-between mb-4">
           <div>
             <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-widest font-semibold mb-1.5">
-              ForkFate Report
+              CommitCasualty Report
             </p>
             <p className="font-semibold text-gray-900 dark:text-gray-100 text-lg">
               {repo.fullName}
@@ -103,8 +103,8 @@ export function ShareCard(): JSX.Element {
         <button
           onClick={() => {
             const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-              `ForkFate: ${repo.fullName} has a ${scoreResult.score}% fork survival score with ${scoreResult.activeForks} active forks!`
-            )}&hashtags=ForkFate`;
+              `CommitCasualty: ${repo.fullName} has a ${scoreResult.score}% fork survival score with ${scoreResult.activeForks} active forks!`
+            )}&hashtags=CommitCasualty`;
             window.open(url, '_blank', 'noopener,noreferrer');
           }}
           className="h-11 w-11 flex items-center justify-center bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700
@@ -123,7 +123,7 @@ export function ShareCard(): JSX.Element {
         id="share-text"
         className="sr-only"
         readOnly
-        value={`ForkFate Report: ${repo.fullName}\nSurvival Score: ${scoreResult.score}%\nTotal Forks: ${scoreResult.totalForks} | Active: ${scoreResult.activeForks}`}
+        value={`CommitCasualty Report: ${repo.fullName}\nSurvival Score: ${scoreResult.score}%\nTotal Forks: ${scoreResult.totalForks} | Active: ${scoreResult.activeForks}`}
         aria-hidden="true"
       />
     </div>

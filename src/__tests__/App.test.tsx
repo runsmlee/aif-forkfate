@@ -3,14 +3,14 @@ import { render, screen } from '@testing-library/react';
 import App from '../App';
 
 describe('App', () => {
-  it('renders the ForkFate header', () => {
+  it('renders the CommitCasualty header', () => {
     render(<App />);
-    expect(screen.getByText('ForkFate')).toBeInTheDocument();
+    expect(screen.getByText('CommitCasualty')).toBeInTheDocument();
   });
 
   it('renders the hero text when no data is loaded', () => {
     render(<App />);
-    expect(screen.getByText(/Reveal Your Fork/)).toBeInTheDocument();
+    expect(screen.getByText(/Is Your Dependency/)).toBeInTheDocument();
   });
 
   it('renders the repo URL input', () => {
@@ -26,6 +26,12 @@ describe('App', () => {
   it('renders the dark mode toggle', () => {
     render(<App />);
     expect(screen.getByRole('button', { name: /Switch to/i })).toBeInTheDocument();
+  });
+
+  it('renders example repo buttons', () => {
+    render(<App />);
+    expect(screen.getByRole('button', { name: /Analyze React repository/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Analyze Next.js repository/i })).toBeInTheDocument();
   });
 
   it('has accessible landmark regions', () => {
