@@ -1,5 +1,5 @@
 {
-  "name": "forkfate",
+  "name": "shareshed",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -10,17 +10,12 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "d3": "^7.9.0",
     "react": "^19.2.5",
-    "react-dom": "^19.2.5",
-    "react-router-dom": "^7.14.0",
-    "zod": "^4.3.6",
-    "zustand": "^5.0.12"
+    "react-dom": "^19.2.5"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
-    "@types/d3": "^7.4.3",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
@@ -31,5 +26,9 @@
     "typescript": "^6.0.2",
     "vite": "^8.0.8",
     "vitest": "^4.1.4"
-  }
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "ShareShed — Dead Simple Neighborhood Tool Lending"
 }

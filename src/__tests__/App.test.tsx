@@ -3,40 +3,49 @@ import { render, screen } from '@testing-library/react';
 import App from '../App';
 
 describe('App', () => {
-  it('renders the CommitCasualty header', () => {
+  it('renders the ShareShed brand in the header', () => {
     render(<App />);
-    expect(screen.getByText('CommitCasualty')).toBeInTheDocument();
+    const brandElements = screen.getAllByText('ShareShed');
+    expect(brandElements.length).toBeGreaterThanOrEqual(1);
+    // First occurrence is in the header
+    expect(brandElements[0]).toBeInTheDocument();
   });
 
-  it('renders the hero text when no data is loaded', () => {
+  it('renders the hero section with main tagline', () => {
     render(<App />);
-    expect(screen.getByText(/Is Your Dependency/)).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { level: 1 })
+    ).toHaveTextContent('Borrow Tools from');
   });
 
-  it('renders the repo URL input', () => {
+  it('renders the Browse Tools CTA', () => {
     render(<App />);
-    expect(screen.getByLabelText('GitHub Repository URL')).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /browse tools/i })
+    ).toBeInTheDocument();
   });
 
-  it('renders the analyze button', () => {
+  it('renders the Lend a Tool button', () => {
     render(<App />);
-    expect(screen.getByRole('button', { name: /Analyze repository/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /lend a tool/i })
+    ).toBeInTheDocument();
   });
 
-  it('renders the dark mode toggle', () => {
+  it('renders the How It Works section', () => {
     render(<App />);
-    expect(screen.getByRole('button', { name: /Switch to/i })).toBeInTheDocument();
+    expect(screen.getByText('How It Works')).toBeInTheDocument();
   });
 
-  it('renders example repo buttons', () => {
+  it('renders featured tools on the home page', () => {
     render(<App />);
-    expect(screen.getByRole('button', { name: /Analyze React repository/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Analyze Next.js repository/i })).toBeInTheDocument();
+    expect(screen.getByText('Recently Added')).toBeInTheDocument();
   });
 
-  it('has accessible landmark regions', () => {
+  it('renders the footer', () => {
     render(<App />);
-    const regions = screen.getAllByRole('region');
-    expect(regions.length).toBeGreaterThanOrEqual(0);
+    expect(
+      screen.getByText(/dead simple neighborhood tool lending/i)
+    ).toBeInTheDocument();
   });
 });

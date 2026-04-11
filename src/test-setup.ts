@@ -1,4 +1,6 @@
 import '@testing-library/jest-dom';
+import React from 'react';
+import { flushSync } from 'react-dom';
 
 // Mock window.matchMedia for jsdom
 Object.defineProperty(window, 'matchMedia', {
@@ -15,14 +17,9 @@ Object.defineProperty(window, 'matchMedia', {
   }),
 });
 
-// Patch React.act for React 19 + @testing-library/react compatibility
-const React = require('react');
-if (typeof React.act !== 'function') {
-  // Use ReactDOM's internal act mechanism via flushSync
-  const ReactDOM = require('react-dom');
-
-  React.act = function act(callback: () => unknown): unknown {
-    const flushSync = ReactDOM.flushSync;
+// Polyfill React.act for React 19 + @testing-library/react compatibility
+if (typeof (React as Record<string, unknown>).act !== 'function') {
+  (React as Record<string, unknown>).act = function act(callback: () => unknown): unknown {
     let result: unknown;
     flushSync(() => {
       result = callback();
