@@ -1,0 +1,35 @@
+{
+  "name": "forkfate",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "d3": "^7.9.0",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "react-router-dom": "^7.14.0",
+    "zod": "^4.3.6",
+    "zustand": "^5.0.12"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/d3": "^7.4.3",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "autoprefixer": "^10.4.27",
+    "jsdom": "^29.0.2",
+    "postcss": "^8.5.9",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^6.0.2",
+    "vite": "^8.0.8",
+    "vitest": "^4.1.4"
+  }
+}
