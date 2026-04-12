@@ -1,5 +1,6 @@
 import type { RepoAnalysis } from '../lib/types';
 import { MetricCard } from './MetricCard';
+import { ShareButton } from './ShareButton';
 
 interface ScoreDisplayProps {
   analysis: RepoAnalysis;
@@ -100,8 +101,9 @@ export function ScoreDisplay({ analysis, onReset }: ScoreDisplayProps): JSX.Elem
           )}
         </div>
 
-        {/* Reset */}
-        <div className="text-center">
+        {/* Share + Reset */}
+        <div className="flex items-center justify-center gap-3">
+          <ShareButton analysis={analysis} />
           <button onClick={onReset} className="btn-secondary">
             Analyze Another Repository
           </button>

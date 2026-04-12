@@ -1,9 +1,14 @@
+import { lazy, Suspense } from 'react';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
-import { ScoreDisplay } from './components/ScoreDisplay';
 import { RecentAnalyses } from './components/RecentAnalyses';
 import { Footer } from './components/Footer';
+import { AnalysisSkeleton } from './components/Skeleton';
 import { useRepoAnalysis } from './hooks/useRepoAnalysis';
+
+const ScoreDisplay = lazy(() =>
+  import('./components/ScoreDisplay').then((m) => ({ default: m.ScoreDisplay }))
+);
 
 declare global {
   interface Window {
@@ -41,7 +46,9 @@ export default function App(): JSX.Element {
       <Header />
 
       <main className="flex-1">
-        {!currentAnalysis && (
+        {status === 'loading' && !currentAnalysis && <AnalysisSkeleton />}
+
+        {status !== 'loading' && !currentAnalysis && (
           <>
             <Hero onAnalyze={handleAnalyze} status={status} />
 
@@ -62,10 +69,12 @@ export default function App(): JSX.Element {
         )}
 
         {currentAnalysis && (
-          <ScoreDisplay
-            analysis={currentAnalysis}
-            onReset={handleReset}
-          />
+          <Suspense fallback={<AnalysisSkeleton />}>
+            <ScoreDisplay
+              analysis={currentAnalysis}
+              onReset={handleReset}
+            />
+          </Suspense>
         )}
       </main>
 
