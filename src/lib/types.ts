@@ -1,55 +1,89 @@
-export interface Tool {
-  id: string;
+// CommitCasualty — Types for open-source reliability analysis
+
+export interface GitHubRepo {
+  id: number;
   name: string;
+  full_name: string;
+  description: string | null;
+  html_url: string;
+  stargazers_count: number;
+  forks_count: number;
+  open_issues_count: number;
+  language: string | null;
+  created_at: string;
+  updated_at: string;
+  pushed_at: string;
+  topics: string[];
+  license: { spdx_id: string } | null;
+}
+
+export interface GitHubCommit {
+  sha: string;
+  commit: {
+    message: string;
+    author: { date: string };
+  };
+}
+
+export interface GitHubContributor {
+  id: number;
+  login: string;
+  contributions: number;
+  html_url: string;
+  avatar_url: string;
+}
+
+export interface GitHubIssue {
+  id: number;
+  number: number;
+  title: string;
+  state: 'open' | 'closed';
+  created_at: string;
+  closed_at: string | null;
+  pull_request?: { html_url: string };
+}
+
+export interface RepoAnalysis {
+  repo: string;
+  timestamp: string;
+  score: ReliabilityScore;
+  repoData: GitHubRepo;
+  commitCount: number;
+  contributorCount: number;
+  openIssueCount: number;
+  closedIssueCount: number;
+  lastCommitDate: string | null;
+  lastReleaseDate: string | null;
+}
+
+export interface ReliabilityScore {
+  total: number;
+  grade: 'A+' | 'A' | 'B' | 'C' | 'D' | 'F';
+  breakdown: ScoreBreakdown;
+}
+
+export interface ScoreBreakdown {
+  commitActivity: MetricScore;
+  issueHealth: MetricScore;
+  contributorDiversity: MetricScore;
+  freshness: MetricScore;
+}
+
+export interface MetricScore {
+  score: number; // 0-25
+  max: number;
+  label: string;
   description: string;
-  category: ToolCategory;
-  condition: ToolCondition;
-  imageUrl: string;
-  owner: Owner;
-  available: boolean;
-  location: string;
-  borrowedBy: string | null;
-  createdAt: string;
 }
 
-export type ToolCategory =
-  | 'power-tools'
-  | 'hand-tools'
-  | 'garden'
-  | 'workshop'
-  | 'measuring'
-  | 'safety';
+export type AnalysisStatus = 'idle' | 'loading' | 'success' | 'error';
 
-export type ToolCondition = 'excellent' | 'good' | 'fair' | 'worn';
+export const EXAMPLE_REPOS = [
+  'facebook/react',
+  'vercel/next.js',
+  'denoland/deno',
+  'sveltejs/svelte',
+  'microsoft/typescript',
+] as const;
 
-export interface Owner {
-  id: string;
-  name: string;
-  avatarInitials: string;
-  distance: string;
-  rating: number;
-  toolCount: number;
-}
-
-export interface BorrowRequest {
-  toolId: string;
-  borrowerName: string;
-  message: string;
-  requestedDate: string;
-}
-
-export const CATEGORY_LABELS: Record<ToolCategory, string> = {
-  'power-tools': 'Power Tools',
-  'hand-tools': 'Hand Tools',
-  garden: 'Garden',
-  workshop: 'Workshop',
-  measuring: 'Measuring',
-  safety: 'Safety',
-};
-
-export const CONDITION_LABELS: Record<ToolCondition, string> = {
-  excellent: 'Excellent',
-  good: 'Good',
-  fair: 'Fair',
-  worn: 'Well-used',
-};
+export type ExampleRepo = (typeof EXAMPLE_REPOS)[number];

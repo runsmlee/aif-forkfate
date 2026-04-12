@@ -1,5 +1,5 @@
 {
-  "name": "shareshed",
+  "name": "commitcasualty",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -16,6 +16,7 @@
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
@@ -30,5 +31,5 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "ShareShed — Dead Simple Neighborhood Tool Lending"
+  "description": "CommitCasualty — Instantly Quantify Open-Source Reliability"
 }
