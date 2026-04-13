@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect, useCallback, useRef } from 'react';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { RecentAnalyses } from './components/RecentAnalyses';
@@ -8,6 +8,10 @@ import { useRepoAnalysis } from './hooks/useRepoAnalysis';
 
 const ScoreDisplay = lazy(() =>
   import('./components/ScoreDisplay').then((m) => ({ default: m.ScoreDisplay }))
+);
+
+const HowItWorks = lazy(() =>
+  import('./components/HowItWorks').then((m) => ({ default: m.HowItWorks }))
 );
 
 declare global {
@@ -20,6 +24,7 @@ declare global {
 
 export default function App(): JSX.Element {
   const { history, currentAnalysis, status, error, analyze, reset, clearHistory } = useRepoAnalysis();
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const handleAnalyze = (repo: string) => {
     analyze(repo);
@@ -40,6 +45,37 @@ export default function App(): JSX.Element {
     window.aif?.track('clear_history');
     clearHistory();
   };
+
+  // Keyboard shortcut: "/" to focus search input
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    // Don't capture "/" when user is typing in an input or textarea
+    const target = e.target as HTMLElement;
+    if (
+      target.tagName === 'INPUT' ||
+      target.tagName === 'TEXTAREA' ||
+      target.isContentEditable
+    ) {
+      return;
+    }
+
+    if (e.key === '/') {
+      e.preventDefault();
+      inputRef.current?.focus();
+    }
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [handleKeyDown]);
+
+  // Store ref to the search input in the Hero component
+  useEffect(() => {
+    const input = document.getElementById('repo-input') as HTMLInputElement | null;
+    if (input) {
+      inputRef.current = input;
+    }
+  }, [currentAnalysis]);
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -65,6 +101,10 @@ export default function App(): JSX.Element {
               onSelect={handleSelectHistory}
               onClear={handleClearHistory}
             />
+
+            <Suspense fallback={null}>
+              <HowItWorks />
+            </Suspense>
           </>
         )}
 

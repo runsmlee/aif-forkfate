@@ -1,5 +1,6 @@
 import type { RepoAnalysis } from '../lib/types';
 import { MetricCard } from './MetricCard';
+import { ScoreGauge } from './ScoreGauge';
 import { ShareButton } from './ShareButton';
 
 interface ScoreDisplayProps {
@@ -36,7 +37,7 @@ export function ScoreDisplay({ analysis, onReset }: ScoreDisplayProps): JSX.Elem
       <div className="max-w-2xl mx-auto">
         {/* Score header */}
         <div className="text-center mb-10">
-          <p className="text-sm text-gray-500 mb-2">
+          <p className="text-sm text-gray-500 mb-4">
             <a
               href={repoData.html_url}
               target="_blank"
@@ -46,17 +47,21 @@ export function ScoreDisplay({ analysis, onReset }: ScoreDisplayProps): JSX.Elem
               {analysis.repo}
             </a>
           </p>
-          <div className="flex items-center justify-center gap-4 mb-3">
-            <span
-              className={`text-6xl sm:text-7xl font-extrabold bg-gradient-to-br ${gradeColors[score.grade] ?? 'from-gray-400 to-gray-600'} bg-clip-text text-transparent`}
-              aria-label={`Reliability grade: ${score.grade}`}
-            >
-              {score.grade}
-            </span>
+
+          <div className="flex items-center justify-center gap-6 mb-3">
+            <ScoreGauge score={score.total} grade={score.grade} />
+            <div className="flex flex-col items-start">
+              <span
+                className={`text-5xl sm:text-6xl font-extrabold bg-gradient-to-br ${gradeColors[score.grade] ?? 'from-gray-400 to-gray-600'} bg-clip-text text-transparent`}
+                aria-label={`Reliability grade: ${score.grade}`}
+              >
+                {score.grade}
+              </span>
+              <p className="text-sm text-gray-400 mt-1">
+                Reliability Score
+              </p>
+            </div>
           </div>
-          <p className="text-3xl sm:text-4xl font-bold text-gray-900" aria-label={`Total score: ${score.total} out of 100`}>
-            {score.total}<span className="text-lg text-gray-400 font-normal">/100</span>
-          </p>
         </div>
 
         {/* Repo stats */}

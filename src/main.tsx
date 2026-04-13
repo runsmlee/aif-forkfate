@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
+
+const ErrorBoundary = lazy(() => import('./components/ErrorBoundary'));
 
 const rootElement = document.getElementById('root');
 
@@ -11,6 +13,10 @@ if (!rootElement) {
 
 ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
-    <App />
+    <Suspense fallback={<App />}>
+      <ErrorBoundary>
+        <App />
+      </ErrorBoundary>
+    </Suspense>
   </React.StrictMode>
 );

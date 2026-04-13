@@ -67,7 +67,9 @@ describe('ScoreDisplay', () => {
   it('renders the total score and grade', () => {
     render(<ScoreDisplay analysis={mockAnalysis} onReset={() => {}} />);
     expect(screen.getByText('78')).toBeInTheDocument();
-    expect(screen.getByText('A')).toBeInTheDocument();
+    // Grade "A" appears in both the ScoreGauge and the large grade display
+    const gradeElements = screen.getAllByText('A');
+    expect(gradeElements.length).toBeGreaterThanOrEqual(1);
   });
 
   it('renders all four metric breakdowns', () => {

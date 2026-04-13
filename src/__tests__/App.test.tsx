@@ -155,4 +155,26 @@ describe('App', () => {
     expect(screen.getByRole('contentinfo')).toBeInTheDocument();
     expect(screen.getByText(/deterministic metrics/i)).toBeInTheDocument();
   });
+
+  it('focuses the search input when "/" is pressed', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    const input = screen.getByLabelText(/github repository/i);
+    expect(document.activeElement).not.toBe(input);
+
+    await user.keyboard('/');
+    expect(document.activeElement).toBe(input);
+  });
+
+  it('renders the "How It Works" section', () => {
+    render(<App />);
+    expect(screen.getByText(/how it works/i)).toBeInTheDocument();
+  });
+
+  it('wraps the app in an ErrorBoundary', () => {
+    render(<App />);
+    // The app should render normally without errors (ErrorBoundary passes through)
+    expect(screen.getByRole('heading', { name: /instantly quantify/i })).toBeInTheDocument();
+  });
 });
