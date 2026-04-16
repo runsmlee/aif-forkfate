@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 interface MetricCardProps {
   label: string;
   score: number;
@@ -6,7 +8,7 @@ interface MetricCardProps {
   icon: string;
 }
 
-export function MetricCard({ label, score, max, description, icon }: MetricCardProps): JSX.Element {
+export const MetricCard = memo(function MetricCard({ label, score, max, description, icon }: MetricCardProps): JSX.Element {
   const percentage = Math.round((score / max) * 100);
   const color =
     percentage >= 80
@@ -37,4 +39,4 @@ export function MetricCard({ label, score, max, description, icon }: MetricCardP
       <p className="text-xs text-gray-500">{description}</p>
     </div>
   );
-}
+});

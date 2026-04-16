@@ -1,4 +1,6 @@
-export function Footer(): JSX.Element {
+import { memo } from 'react';
+
+export const Footer = memo(function Footer(): JSX.Element {
   return (
     <footer className="border-t border-gray-100 py-8 px-4 sm:px-6" role="contentinfo">
       <div className="max-w-4xl mx-auto text-center">
@@ -12,4 +14,4 @@ export function Footer(): JSX.Element {
       </div>
     </footer>
   );
-}
+});

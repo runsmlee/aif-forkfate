@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useCallback, useRef } from 'react';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
+import type { HeroHandle } from './components/Hero';
 import { RecentAnalyses } from './components/RecentAnalyses';
 import { Footer } from './components/Footer';
 import { AnalysisSkeleton } from './components/Skeleton';
@@ -23,8 +24,8 @@ declare global {
 }
 
 export default function App(): JSX.Element {
-  const { history, currentAnalysis, status, error, analyze, reset, clearHistory } = useRepoAnalysis();
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  const { history, currentAnalysis, status, error, analyze, reset, clearHistory, dismissError } = useRepoAnalysis();
+  const heroRef = useRef<HeroHandle>(null);
 
   const handleAnalyze = (repo: string) => {
     analyze(repo);
@@ -60,7 +61,7 @@ export default function App(): JSX.Element {
 
     if (e.key === '/') {
       e.preventDefault();
-      inputRef.current?.focus();
+      heroRef.current?.focusInput();
     }
   }, []);
 
@@ -69,29 +70,49 @@ export default function App(): JSX.Element {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
 
-  // Store ref to the search input in the Hero component
+  // Update document title when viewing analysis
   useEffect(() => {
-    const input = document.getElementById('repo-input') as HTMLInputElement | null;
-    if (input) {
-      inputRef.current = input;
+    if (currentAnalysis) {
+      document.title = `${currentAnalysis.repo} — Score ${currentAnalysis.score.total}/100 (${currentAnalysis.score.grade}) | CommitCasualty`;
+    } else {
+      document.title = 'CommitCasualty — Instantly Quantify Open-Source Reliability';
     }
   }, [currentAnalysis]);
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-brand-500 focus:text-white focus:rounded-md focus:text-sm focus:font-semibold"
+      >
+        Skip to content
+      </a>
       <Header />
 
-      <main className="flex-1">
-        {status === 'loading' && !currentAnalysis && <AnalysisSkeleton />}
+      <main id="main-content" className="flex-1">
+        {status === 'loading' && !currentAnalysis && (
+          <div aria-live="polite">
+            <AnalysisSkeleton />
+          </div>
+        )}
 
         {status !== 'loading' && !currentAnalysis && (
           <>
-            <Hero onAnalyze={handleAnalyze} status={status} />
+            <Hero ref={heroRef} onAnalyze={handleAnalyze} status={status} />
 
             {error && (
-              <div className="max-w-2xl mx-auto px-4 sm:px-6 mb-6" role="alert">
-                <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-sm text-red-700">
-                  {error}
+              <div className="max-w-2xl mx-auto px-4 sm:px-6 mb-6" aria-live="polite">
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-sm text-red-700 flex items-start justify-between gap-3" role="alert">
+                  <p>{error}</p>
+                  <button
+                    onClick={dismissError}
+                    className="text-red-400 hover:text-red-600 transition-colors flex-shrink-0"
+                    aria-label="Dismiss error"
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
                 </div>
               </div>
             )}

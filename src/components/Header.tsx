@@ -1,4 +1,6 @@
-export function Header(): JSX.Element {
+import { memo } from 'react';
+
+export const Header = memo(function Header(): JSX.Element {
   return (
     <header className="bg-white border-b border-gray-100 sticky top-0 z-50">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
@@ -24,4 +26,4 @@ export function Header(): JSX.Element {
       </div>
     </header>
   );
-}
+});

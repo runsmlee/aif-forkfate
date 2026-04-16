@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 interface ScoreGaugeProps {
   score: number;
   grade: string;
@@ -16,7 +18,7 @@ function getGradeColor(grade: string): string {
   return GRADE_COLORS[grade] ?? '#9CA3AF';
 }
 
-export function ScoreGauge({ score, grade }: ScoreGaugeProps): JSX.Element {
+export const ScoreGauge = memo(function ScoreGauge({ score, grade }: ScoreGaugeProps): JSX.Element {
   const radius = 54;
   const strokeWidth = 8;
   const normalizedRadius = radius - strokeWidth / 2;
@@ -48,4 +50,4 @@ export function ScoreGauge({ score, grade }: ScoreGaugeProps): JSX.Element {
       </div>
     </div>
   );
-}
+});

@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 const METRICS = [
   {
     icon: '🔥',
@@ -29,7 +31,7 @@ const METRICS = [
   },
 ];
 
-export function HowItWorks(): JSX.Element {
+export const HowItWorks = memo(function HowItWorks(): JSX.Element {
   return (
     <section className="py-16 px-4 sm:px-6 bg-gray-50" aria-label="How the scoring works">
       <div className="max-w-2xl mx-auto">
@@ -72,4 +74,4 @@ export function HowItWorks(): JSX.Element {
       </div>
     </section>
   );
-}
+});

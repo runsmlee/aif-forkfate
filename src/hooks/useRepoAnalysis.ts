@@ -1,7 +1,5 @@
 import { useState, useCallback } from 'react';
 import type { RepoAnalysis, AnalysisStatus, ReliabilityScore } from '../lib/types';
-import { analyzeRepo } from '../lib/github-api';
-import { computeReliabilityScore } from '../lib/score-engine';
 import { useLocalStorage } from './useLocalStorage';
 
 const STORAGE_KEY = 'commitcasualty_history';
@@ -25,6 +23,10 @@ export function useRepoAnalysis() {
       setError(null);
 
       try {
+        const [{ analyzeRepo }, { computeReliabilityScore }] = await Promise.all([
+          import('../lib/github-api'),
+          import('../lib/score-engine'),
+        ]);
         const data = await analyzeRepo(repo);
         const score: ReliabilityScore = computeReliabilityScore({
           repoData: data.repoData,
@@ -79,6 +81,11 @@ export function useRepoAnalysis() {
     setHistory([]);
   }, [setHistory]);
 
+  const dismissError = useCallback(() => {
+    setError(null);
+    setStatus('idle');
+  }, []);
+
   return {
     history,
     currentAnalysis,
@@ -87,5 +94,6 @@ export function useRepoAnalysis() {
     analyze,
     reset,
     clearHistory,
+    dismissError,
   };
 }

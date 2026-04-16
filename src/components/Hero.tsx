@@ -1,14 +1,25 @@
-import { useState, type FormEvent } from 'react';
+import { useState, forwardRef, useImperativeHandle, useRef, type FormEvent } from 'react';
 import { EXAMPLE_REPOS } from '../lib/types';
+
+export interface HeroHandle {
+  focusInput: () => void;
+}
 
 interface HeroProps {
   onAnalyze: (repo: string) => void;
   status: 'idle' | 'loading' | 'success' | 'error';
 }
 
-export function Hero({ onAnalyze, status }: HeroProps): JSX.Element {
+export const Hero = forwardRef<HeroHandle, HeroProps>(function Hero({ onAnalyze, status }, ref): JSX.Element {
   const [input, setInput] = useState('');
   const [shake, setShake] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useImperativeHandle(ref, () => ({
+    focusInput: () => {
+      inputRef.current?.focus();
+    },
+  }));
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -50,6 +61,7 @@ export function Hero({ onAnalyze, status }: HeroProps): JSX.Element {
                 </svg>
               </div>
               <input
+                ref={inputRef}
                 id="repo-input"
                 type="text"
                 value={input}
@@ -98,4 +110,4 @@ export function Hero({ onAnalyze, status }: HeroProps): JSX.Element {
       </div>
     </section>
   );
-}
+});
