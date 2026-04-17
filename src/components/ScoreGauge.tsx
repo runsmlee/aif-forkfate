@@ -1,4 +1,5 @@
 import { memo } from 'react';
+import { useAnimatedCounter } from '../hooks/useAnimatedCounter';
 
 interface ScoreGaugeProps {
   score: number;
@@ -19,14 +20,15 @@ function getGradeColor(grade: string): string {
 }
 
 export const ScoreGauge = memo(function ScoreGauge({ score, grade }: ScoreGaugeProps): JSX.Element {
+  const animatedScore = useAnimatedCounter(score, 1000);
   const radius = 54;
   const strokeWidth = 8;
   const normalizedRadius = radius - strokeWidth / 2;
   const circumference = normalizedRadius * 2 * Math.PI;
-  const strokeDashoffset = circumference - (score / 100) * circumference;
+  const displayScore = Math.min(100, Math.max(0, score));
+  const strokeDashoffset = circumference - (displayScore / 100) * circumference;
   const color = getGradeColor(grade);
   const size = radius * 2;
-  const displayScore = Math.min(100, Math.max(0, score));
 
   return (
     <div className="relative inline-flex items-center justify-center" aria-label={`Score gauge: ${score} out of 100, grade ${grade}`} role="img">
@@ -45,7 +47,7 @@ export const ScoreGauge = memo(function ScoreGauge({ score, grade }: ScoreGaugeP
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-2xl sm:text-3xl font-extrabold" style={{ color }}>{displayScore}</span>
+        <span className="text-2xl sm:text-3xl font-extrabold" style={{ color }}>{animatedScore}</span>
         <span className="text-xs font-bold text-gray-500 mt-0.5">{grade}</span>
       </div>
     </div>

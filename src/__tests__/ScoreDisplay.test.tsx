@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ScoreDisplay } from '../components/ScoreDisplay';
 import type { ReliabilityScore, RepoAnalysis } from '../lib/types';
@@ -64,9 +64,20 @@ const mockAnalysis: RepoAnalysis = {
 };
 
 describe('ScoreDisplay', () => {
-  it('renders the total score and grade', () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('renders the total score after animation', async () => {
     render(<ScoreDisplay analysis={mockAnalysis} onReset={() => {}} />);
-    expect(screen.getByText('78')).toBeInTheDocument();
+    // After animation completes, score 78 should be visible
+    await waitFor(() => {
+      expect(screen.getByText('78')).toBeInTheDocument();
+    }, { timeout: 3000 });
     // Grade "A" appears in both the ScoreGauge and the large grade display
     const gradeElements = screen.getAllByText('A');
     expect(gradeElements.length).toBeGreaterThanOrEqual(1);
@@ -97,11 +108,34 @@ describe('ScoreDisplay', () => {
     expect(screen.getByText(/46K/)).toBeInTheDocument();
   });
 
+  it('renders repo description', () => {
+    render(<ScoreDisplay analysis={mockAnalysis} onReset={() => {}} />);
+    expect(screen.getByText('The library for web and native user interfaces.')).toBeInTheDocument();
+  });
+
   it('renders a reset button', async () => {
     const onReset = vi.fn();
     render(<ScoreDisplay analysis={mockAnalysis} onReset={onReset} />);
     const btn = screen.getByRole('button', { name: /analyze another/i });
     await userEvent.click(btn);
     expect(onReset).toHaveBeenCalledOnce();
+  });
+
+  it('renders a share button', () => {
+    render(<ScoreDisplay analysis={mockAnalysis} onReset={() => {}} />);
+    expect(screen.getByRole('button', { name: /share score/i })).toBeInTheDocument();
+  });
+
+  it('renders license information when available', () => {
+    render(<ScoreDisplay analysis={mockAnalysis} onReset={() => {}} />);
+    expect(screen.getByText(/MIT/)).toBeInTheDocument();
+  });
+
+  it('shows the animated total score counter', async () => {
+    render(<ScoreDisplay analysis={mockAnalysis} onReset={() => {}} />);
+    // Wait for animation to complete — the total should appear as "78/100"
+    await waitFor(() => {
+      expect(screen.getByText('78/100')).toBeInTheDocument();
+    }, { timeout: 3000 });
   });
 });

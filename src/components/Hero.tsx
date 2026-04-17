@@ -40,11 +40,11 @@ export const Hero = forwardRef<HeroHandle, HeroProps>(function Hero({ onAnalyze,
   return (
     <section className="py-16 sm:py-24 px-4 sm:px-6" aria-label="Search for a repository">
       <div className="max-w-2xl mx-auto text-center">
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 tracking-tight mb-4">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-gray-100 tracking-tight mb-4">
           Instantly Quantify
           <span className="text-brand-500 block sm:inline sm:ml-2">Open-Source Reliability</span>
         </h1>
-        <p className="text-base sm:text-lg text-gray-500 mb-10 max-w-lg mx-auto">
+        <p className="text-base sm:text-lg text-gray-500 dark:text-gray-400 mb-10 max-w-lg mx-auto">
           Enter any GitHub repository to get a real-time reliability score based on commit activity,
           issue health, contributor diversity, and freshness.
         </p>
@@ -56,7 +56,7 @@ export const Hero = forwardRef<HeroHandle, HeroProps>(function Hero({ onAnalyze,
           <div className="flex gap-2">
             <div className={`flex-1 relative ${shake ? 'animate-shake' : ''}`}>
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <svg className="h-5 w-5 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
                 </svg>
               </div>
@@ -68,7 +68,7 @@ export const Hero = forwardRef<HeroHandle, HeroProps>(function Hero({ onAnalyze,
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="e.g. facebook/react"
                 aria-label="GitHub repository (owner/repo)"
-                className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-sm sm:text-base transition-shadow"
+                className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-sm sm:text-base transition-shadow"
                 autoComplete="off"
                 spellCheck={false}
               />
@@ -95,13 +95,13 @@ export const Hero = forwardRef<HeroHandle, HeroProps>(function Hero({ onAnalyze,
         </form>
 
         <div className="flex flex-wrap justify-center gap-2" aria-label="Example repositories">
-          <span className="text-xs text-gray-400 py-1">Try:</span>
+          <span className="text-xs text-gray-400 dark:text-gray-500 py-1">Try:</span>
           {EXAMPLE_REPOS.map((repo) => (
             <button
               key={repo}
               onClick={() => handleExample(repo)}
               disabled={status === 'loading'}
-              className="text-xs px-3 py-1 rounded-full bg-gray-100 text-gray-600 hover:bg-brand-50 hover:text-brand-700 transition-colors disabled:opacity-50"
+              className="text-xs px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-brand-50 dark:hover:bg-brand-900/20 hover:text-brand-700 dark:hover:text-brand-400 transition-colors disabled:opacity-50"
             >
               {repo}
             </button>

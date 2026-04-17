@@ -80,7 +80,7 @@ export default function App(): JSX.Element {
   }, [currentAnalysis]);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-white dark:bg-gray-950 flex flex-col transition-colors duration-200">
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-brand-500 focus:text-white focus:rounded-md focus:text-sm focus:font-semibold"
@@ -102,11 +102,11 @@ export default function App(): JSX.Element {
 
             {error && (
               <div className="max-w-2xl mx-auto px-4 sm:px-6 mb-6" aria-live="polite">
-                <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-sm text-red-700 flex items-start justify-between gap-3" role="alert">
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 text-sm text-red-700 dark:text-red-400 flex items-start justify-between gap-3" role="alert">
                   <p>{error}</p>
                   <button
                     onClick={dismissError}
-                    className="text-red-400 hover:text-red-600 transition-colors flex-shrink-0"
+                    className="text-red-400 hover:text-red-600 dark:hover:text-red-300 transition-colors flex-shrink-0"
                     aria-label="Dismiss error"
                   >
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" aria-hidden="true">

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import type { RepoAnalysis, AnalysisStatus, ReliabilityScore } from '../lib/types';
 import { useLocalStorage } from './useLocalStorage';
 
@@ -10,6 +10,7 @@ export function useRepoAnalysis() {
   const [status, setStatus] = useState<AnalysisStatus>('idle');
   const [currentAnalysis, setCurrentAnalysis] = useState<RepoAnalysis | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const initialHashAnalyzed = useRef(false);
 
   const analyze = useCallback(
     async (repoInput: string) => {
@@ -53,6 +54,9 @@ export function useRepoAnalysis() {
         setCurrentAnalysis(analysis);
         setStatus('success');
 
+        // Update URL hash for shareable links
+        window.location.hash = repo;
+
         // Persist to localStorage (dedup by repo name)
         setHistory((prev) => {
           const filtered = prev.filter((a) => a.repo !== repo);
@@ -75,6 +79,7 @@ export function useRepoAnalysis() {
     setCurrentAnalysis(null);
     setStatus('idle');
     setError(null);
+    window.location.hash = '';
   }, []);
 
   const clearHistory = useCallback(() => {
@@ -85,6 +90,16 @@ export function useRepoAnalysis() {
     setError(null);
     setStatus('idle');
   }, []);
+
+  // Auto-analyze from URL hash on mount
+  useEffect(() => {
+    if (initialHashAnalyzed.current) return;
+    const hash = window.location.hash.slice(1);
+    if (hash && hash.includes('/')) {
+      initialHashAnalyzed.current = true;
+      analyze(hash);
+    }
+  }, [analyze]);
 
   return {
     history,

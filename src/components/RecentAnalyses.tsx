@@ -10,15 +10,15 @@ function getGradeColor(grade: string): string {
   switch (grade) {
     case 'A+':
     case 'A':
-      return 'text-green-700 bg-green-50 border-green-200';
+      return 'text-green-700 bg-green-50 border-green-200 dark:text-green-400 dark:bg-green-900/30 dark:border-green-800';
     case 'B':
-      return 'text-blue-700 bg-blue-50 border-blue-200';
+      return 'text-blue-700 bg-blue-50 border-blue-200 dark:text-blue-400 dark:bg-blue-900/30 dark:border-blue-800';
     case 'C':
-      return 'text-yellow-700 bg-yellow-50 border-yellow-200';
+      return 'text-yellow-700 bg-yellow-50 border-yellow-200 dark:text-yellow-400 dark:bg-yellow-900/30 dark:border-yellow-800';
     case 'D':
-      return 'text-orange-700 bg-orange-50 border-orange-200';
+      return 'text-orange-700 bg-orange-50 border-orange-200 dark:text-orange-400 dark:bg-orange-900/30 dark:border-orange-800';
     default:
-      return 'text-red-700 bg-red-50 border-red-200';
+      return 'text-red-700 bg-red-50 border-red-200 dark:text-red-400 dark:bg-red-900/30 dark:border-red-800';
   }
 }
 
@@ -39,10 +39,10 @@ export function RecentAnalyses({ history, onSelect, onClear }: RecentAnalysesPro
   return (
     <section className="max-w-2xl mx-auto px-4 sm:px-6 pb-16" aria-label="Recent analyses">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-bold text-gray-900">Recent Analyses</h2>
+        <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">Recent Analyses</h2>
         <button
           onClick={onClear}
-          className="text-xs text-gray-400 hover:text-red-500 transition-colors"
+          className="text-xs text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 transition-colors"
           aria-label="Clear analysis history"
         >
           Clear all
@@ -56,11 +56,11 @@ export function RecentAnalyses({ history, onSelect, onClear }: RecentAnalysesPro
             className="w-full card p-3 flex items-center justify-between hover:shadow-md transition-shadow text-left"
           >
             <div className="min-w-0 flex-1 mr-3">
-              <p className="text-sm font-medium text-gray-900 truncate">{a.repo}</p>
-              <p className="text-xs text-gray-400">{timeAgo(a.timestamp)}</p>
+              <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{a.repo}</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500">{timeAgo(a.timestamp)}</p>
             </div>
             <div className="flex items-center gap-3 flex-shrink-0">
-              <span className="text-lg font-bold text-gray-900">{a.score.total}</span>
+              <span className="text-lg font-bold text-gray-900 dark:text-gray-100">{a.score.total}</span>
               <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${getGradeColor(a.score.grade)}`}>
                 {a.score.grade}
               </span>

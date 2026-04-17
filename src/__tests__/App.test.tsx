@@ -12,6 +12,8 @@ function mockGitHubResponse(repo: string) {
     if (url.includes('/repos/') && !url.includes('/commits') && !url.includes('/contrib') && !url.includes('/issues') && !url.includes('/releases')) {
       return {
         ok: true,
+        status: 200,
+        headers: new Headers({ 'x-ratelimit-remaining': '50' }),
         json: async () => ({
           id: 1,
           name: repo.split('/')[1],
@@ -70,6 +72,7 @@ describe('App', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
+    window.location.hash = '';
   });
 
   it('renders the hero section with search input', () => {
@@ -176,5 +179,61 @@ describe('App', () => {
     render(<App />);
     // The app should render normally without errors (ErrorBoundary passes through)
     expect(screen.getByRole('heading', { name: /instantly quantify/i })).toBeInTheDocument();
+  });
+
+  it('updates URL hash when analysis completes', async () => {
+    mockFetch.mockImplementation(mockGitHubResponse('facebook/react'));
+    const user = userEvent.setup();
+    render(<App />);
+
+    const input = screen.getByLabelText(/github repository/i);
+    const btn = screen.getByRole('button', { name: /analyze/i });
+
+    await user.type(input, 'facebook/react');
+    await user.click(btn);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Commit Activity/i)).toBeInTheDocument();
+    });
+
+    expect(window.location.hash).toBe('#facebook/react');
+  });
+
+  it('auto-analyzes repo from URL hash on mount', async () => {
+    window.location.hash = '#vercel/next.js';
+    mockFetch.mockImplementation(mockGitHubResponse('vercel/next.js'));
+
+    render(<App />);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Commit Activity/i)).toBeInTheDocument();
+    }, { timeout: 5000 });
+  });
+
+  it('shows rate limit error when GitHub API returns 403 with rate limit headers', async () => {
+    mockFetch.mockImplementation((url: string) => {
+      if (url.includes('/repos/') && !url.includes('/commits') && !url.includes('/contrib') && !url.includes('/issues') && !url.includes('/releases')) {
+        return {
+          ok: false,
+          status: 403,
+          statusText: 'Forbidden',
+          headers: new Headers({ 'x-ratelimit-remaining': '0', 'x-ratelimit-reset': String(Math.floor(Date.now() / 1000) + 3600) }),
+        };
+      }
+      return { ok: true, json: async () => ({}) };
+    });
+
+    const user = userEvent.setup();
+    render(<App />);
+
+    const input = screen.getByLabelText(/github repository/i);
+    const btn = screen.getByRole('button', { name: /analyze/i });
+
+    await user.type(input, 'facebook/react');
+    await user.click(btn);
+
+    await waitFor(() => {
+      expect(screen.getByText(/rate limit/i)).toBeInTheDocument();
+    });
   });
 });

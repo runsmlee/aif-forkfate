@@ -22,10 +22,10 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
   render(): ReactNode {
     if (this.state.hasError && this.state.error) {
       return (
-        <div role="alert" className="min-h-screen flex items-center justify-center px-4">
+        <div role="alert" className="min-h-screen flex items-center justify-center px-4 bg-white dark:bg-gray-950">
           <div className="max-w-md w-full text-center">
-            <h1 className="text-xl font-bold text-gray-900 mb-2">Something went wrong</h1>
-            <p className="text-xs text-gray-400 font-mono bg-gray-50 rounded-lg p-3 mb-6 break-all">
+            <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">Something went wrong</h1>
+            <p className="text-xs text-gray-400 dark:text-gray-500 font-mono bg-gray-50 dark:bg-gray-800 rounded-lg p-3 mb-6 break-all">
               {this.state.error.message}
             </p>
             <button onClick={() => this.setState({ hasError: false, error: null })} className="btn-primary">Try Again</button>

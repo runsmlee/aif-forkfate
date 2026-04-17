@@ -1,11 +1,21 @@
-import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { render, screen, waitFor } from '@testing-library/react';
 import { ScoreGauge } from '../components/ScoreGauge';
 
 describe('ScoreGauge', () => {
-  it('renders the score number', () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('renders the score number after animation', async () => {
     render(<ScoreGauge score={78} grade="A" />);
-    expect(screen.getByText('78')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('78')).toBeInTheDocument();
+    }, { timeout: 3000 });
   });
 
   it('renders the grade letter', () => {
@@ -26,15 +36,19 @@ describe('ScoreGauge', () => {
     expect(gauge).toBeTruthy();
   });
 
-  it('renders correctly for low scores', () => {
+  it('renders correctly for low scores', async () => {
     render(<ScoreGauge score={15} grade="D" />);
-    expect(screen.getByText('15')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('15')).toBeInTheDocument();
+    }, { timeout: 3000 });
     expect(screen.getByText('D')).toBeInTheDocument();
   });
 
-  it('renders correctly for high scores', () => {
+  it('renders correctly for high scores', async () => {
     render(<ScoreGauge score={95} grade="A+" />);
-    expect(screen.getByText('95')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('95')).toBeInTheDocument();
+    }, { timeout: 3000 });
     expect(screen.getByText('A+')).toBeInTheDocument();
   });
 

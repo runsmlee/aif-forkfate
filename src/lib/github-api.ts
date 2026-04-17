@@ -17,6 +17,20 @@ function apiError(message: string, status: number): Error {
   return err;
 }
 
+function isRateLimited(res: Response): boolean {
+  return res.status === 403 && res.headers.get('x-ratelimit-remaining') === '0';
+}
+
+function formatRateLimitError(res: Response): string {
+  const resetEpoch = res.headers.get('x-ratelimit-reset');
+  if (resetEpoch) {
+    const resetSeconds = parseInt(resetEpoch, 10) - Math.floor(Date.now() / 1000);
+    const minutes = Math.ceil(resetSeconds / 60);
+    return `GitHub API rate limit exceeded. Try again in ${minutes} minute${minutes !== 1 ? 's' : ''}.`;
+  }
+  return 'GitHub API rate limit exceeded. Please try again later.';
+}
+
 export async function fetchRepo(
   owner: string,
   repo: string
@@ -24,6 +38,7 @@ export async function fetchRepo(
   const res = await fetch(`${GITHUB_API}/repos/${owner}/${repo}`, {
     headers: REQUEST_HEADERS,
   });
+  if (isRateLimited(res)) throw apiError(formatRateLimitError(res), 403);
   if (!res.ok) {
     if (res.status === 404) throw apiError(`Repository ${owner}/${repo} not found`, 404);
     throw apiError(`Failed to fetch repository: ${res.statusText}`, res.status);
@@ -42,6 +57,7 @@ export async function fetchCommits(
   url.searchParams.set('per_page', String(perPage));
 
   const res = await fetch(url.toString(), { headers: REQUEST_HEADERS });
+  if (isRateLimited(res)) throw apiError(formatRateLimitError(res), 403);
   if (!res.ok) throw apiError(`Failed to fetch commits: ${res.statusText}`, res.status);
   const commits = (await res.json()) as GitHubCommit[];
 
@@ -60,6 +76,7 @@ export async function fetchContributors(
   url.searchParams.set('per_page', String(perPage));
 
   const res = await fetch(url.toString(), { headers: REQUEST_HEADERS });
+  if (isRateLimited(res)) throw apiError(formatRateLimitError(res), 403);
   if (!res.ok) throw apiError(`Failed to fetch contributors: ${res.statusText}`, res.status);
   return res.json() as Promise<GitHubContributor[]>;
 }
@@ -75,6 +92,7 @@ export async function fetchIssues(
   url.searchParams.set('per_page', String(perPage));
 
   const res = await fetch(url.toString(), { headers: REQUEST_HEADERS });
+  if (isRateLimited(res)) throw apiError(formatRateLimitError(res), 403);
   if (!res.ok) throw apiError(`Failed to fetch issues: ${res.statusText}`, res.status);
   const issues = (await res.json()) as GitHubIssue[];
 
@@ -91,6 +109,7 @@ export async function fetchLatestRelease(
     { headers: REQUEST_HEADERS }
   );
   if (res.status === 404) return null;
+  if (isRateLimited(res)) throw apiError(formatRateLimitError(res), 403);
   if (!res.ok) throw apiError(`Failed to fetch release: ${res.statusText}`, res.status);
   return res.json() as Promise<{ tag_name: string; published_at: string }>;
 }

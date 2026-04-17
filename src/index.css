@@ -12,6 +12,10 @@
     @apply font-sans text-gray-900 bg-white;
   }
 
+  .dark body {
+    @apply text-gray-100 bg-gray-950;
+  }
+
   /* Focus ring styles for accessibility */
   *:focus-visible {
     outline: 2px solid #EF4444;
@@ -49,8 +53,20 @@
     --tw-ring-color: #EF4444;
   }
 
+  .dark .btn-secondary {
+    @apply bg-gray-800 text-gray-200 border-gray-600;
+  }
+
+  .dark .btn-secondary:hover {
+    @apply bg-gray-700;
+  }
+
   .card {
     @apply bg-white rounded-xl border border-gray-200 shadow-sm;
+  }
+
+  .dark .card {
+    @apply bg-gray-800 border-gray-700;
   }
 }
 
