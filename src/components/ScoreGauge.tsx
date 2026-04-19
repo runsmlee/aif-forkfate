@@ -19,6 +19,22 @@ function getGradeColor(grade: string): string {
   return GRADE_COLORS[grade] ?? '#9CA3AF';
 }
 
+function getGradeBgClass(grade: string): string {
+  switch (grade) {
+    case 'A+':
+    case 'A':
+      return 'text-green-500';
+    case 'B':
+      return 'text-blue-500';
+    case 'C':
+      return 'text-yellow-500';
+    case 'D':
+      return 'text-orange-500';
+    default:
+      return 'text-red-500';
+  }
+}
+
 export const ScoreGauge = memo(function ScoreGauge({ score, grade }: ScoreGaugeProps): JSX.Element {
   const animatedScore = useAnimatedCounter(score, 1000);
   const radius = 54;
@@ -31,9 +47,19 @@ export const ScoreGauge = memo(function ScoreGauge({ score, grade }: ScoreGaugeP
   const size = radius * 2;
 
   return (
-    <div className="relative inline-flex items-center justify-center" aria-label={`Score gauge: ${score} out of 100, grade ${grade}`} role="img">
+    <div className="relative inline-flex items-center justify-center" role="img" aria-label={`Score gauge: ${score} out of 100, grade ${grade}`}>
       <svg height={size} width={size} className="-rotate-90" aria-hidden="true">
-        <circle stroke="#F3F4F6" fill="transparent" strokeWidth={strokeWidth} r={normalizedRadius} cx={radius} cy={radius} />
+        {/* Background track */}
+        <circle
+          stroke="#F3F4F6"
+          className="dark:stroke-gray-700"
+          fill="transparent"
+          strokeWidth={strokeWidth}
+          r={normalizedRadius}
+          cx={radius}
+          cy={radius}
+        />
+        {/* Score arc */}
         <circle
           stroke={color}
           fill="transparent"
@@ -47,8 +73,10 @@ export const ScoreGauge = memo(function ScoreGauge({ score, grade }: ScoreGaugeP
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-2xl sm:text-3xl font-extrabold" style={{ color }}>{animatedScore}</span>
-        <span className="text-xs font-bold text-gray-500 mt-0.5">{grade}</span>
+        <span className={`text-2xl sm:text-3xl font-extrabold tabular-nums ${getGradeBgClass(grade)}`}>
+          {animatedScore}
+        </span>
+        <span className="text-xs font-bold text-gray-500 dark:text-gray-400 mt-0.5">{grade}</span>
       </div>
     </div>
   );

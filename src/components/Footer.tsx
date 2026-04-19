@@ -11,6 +11,9 @@ export const Footer = memo(function Footer(): JSX.Element {
         <p className="text-xs text-gray-300 dark:text-gray-600 mt-2">
           Scores are computed from real GitHub API data. No AI involved — just deterministic metrics.
         </p>
+        <p className="text-xs text-gray-300 dark:text-gray-600 mt-1">
+          Results may vary based on GitHub API availability and data freshness.
+        </p>
       </div>
     </footer>
   );

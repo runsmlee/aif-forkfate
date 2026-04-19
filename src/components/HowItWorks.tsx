@@ -49,13 +49,13 @@ export const HowItWorks = memo(function HowItWorks(): JSX.Element {
           {METRICS.map((metric) => (
             <div
               key={metric.title}
-              className="card p-5"
+              className="card p-5 hover:shadow-card-hover transition-shadow duration-200"
               role="listitem"
             >
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-xl" aria-hidden="true">{metric.icon}</span>
                 <h3 className="text-sm font-bold text-gray-900 dark:text-gray-100">{metric.title}</h3>
-                <span className="ml-auto text-xs font-medium text-gray-400 dark:text-gray-500">
+                <span className="ml-auto text-xs font-medium text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded-full">
                   Max {metric.maxScore}
                 </span>
               </div>

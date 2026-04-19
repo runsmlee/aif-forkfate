@@ -35,7 +35,7 @@ export function ScoreDisplay({ analysis, onReset }: ScoreDisplayProps): JSX.Elem
   const animatedTotal = useAnimatedCounter(score.total, 1000);
 
   return (
-    <section className="py-12 px-4 sm:px-6" aria-label="Reliability analysis results">
+    <section className="py-12 px-4 sm:px-6 animate-fade-up" aria-label="Reliability analysis results">
       <div className="max-w-2xl mx-auto">
         {/* Score header */}
         <div className="text-center mb-10">
@@ -44,13 +44,16 @@ export function ScoreDisplay({ analysis, onReset }: ScoreDisplayProps): JSX.Elem
               href={repoData.html_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-brand-600 dark:text-brand-400 hover:underline font-medium"
+              className="text-brand-600 dark:text-brand-400 hover:underline font-medium inline-flex items-center gap-1"
             >
               {analysis.repo}
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
             </a>
           </p>
           {repoData.description && (
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4 max-w-md mx-auto">
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 max-w-md mx-auto">
               {repoData.description}
             </p>
           )}
@@ -64,7 +67,7 @@ export function ScoreDisplay({ analysis, onReset }: ScoreDisplayProps): JSX.Elem
               >
                 {score.grade}
               </span>
-              <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
+              <p className="text-sm text-gray-400 dark:text-gray-500 mt-1 tabular-nums">
                 {animatedTotal}/100
               </p>
             </div>
@@ -73,15 +76,15 @@ export function ScoreDisplay({ analysis, onReset }: ScoreDisplayProps): JSX.Elem
 
         {/* Repo stats */}
         <div className="grid grid-cols-3 gap-3 mb-8">
-          <div className="card p-3 text-center">
+          <div className="card p-3 text-center hover:shadow-card-hover transition-shadow duration-200">
             <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{formatNumber(repoData.stargazers_count)}</p>
             <p className="text-xs text-gray-500 dark:text-gray-400">Stars</p>
           </div>
-          <div className="card p-3 text-center">
+          <div className="card p-3 text-center hover:shadow-card-hover transition-shadow duration-200">
             <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{formatNumber(repoData.forks_count)}</p>
             <p className="text-xs text-gray-500 dark:text-gray-400">Forks</p>
           </div>
-          <div className="card p-3 text-center">
+          <div className="card p-3 text-center hover:shadow-card-hover transition-shadow duration-200">
             <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{repoData.language ?? 'N/A'}</p>
             <p className="text-xs text-gray-500 dark:text-gray-400">Language</p>
           </div>
@@ -102,15 +105,17 @@ export function ScoreDisplay({ analysis, onReset }: ScoreDisplayProps): JSX.Elem
         </div>
 
         {/* Additional details */}
-        <div className="card p-4 text-xs text-gray-500 dark:text-gray-400 space-y-1 mb-8">
-          <p><span className="font-medium text-gray-700 dark:text-gray-300">Last Commit:</span> {formatDate(analysis.lastCommitDate)}</p>
-          <p><span className="font-medium text-gray-700 dark:text-gray-300">Last Release:</span> {formatDate(analysis.lastReleaseDate)}</p>
-          <p><span className="font-medium text-gray-700 dark:text-gray-300">Commits (90d):</span> {analysis.commitCount}</p>
-          <p><span className="font-medium text-gray-700 dark:text-gray-300">Contributors:</span> {analysis.contributorCount}</p>
-          <p><span className="font-medium text-gray-700 dark:text-gray-300">Open / Closed Issues:</span> {analysis.openIssueCount} / {analysis.closedIssueCount}</p>
-          {repoData.license && (
-            <p><span className="font-medium text-gray-700 dark:text-gray-300">License:</span> {repoData.license.spdx_id}</p>
-          )}
+        <div className="card p-4 text-xs text-gray-500 dark:text-gray-400 space-y-1.5 mb-8">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
+            <p><span className="font-medium text-gray-700 dark:text-gray-300">Last Commit:</span> {formatDate(analysis.lastCommitDate)}</p>
+            <p><span className="font-medium text-gray-700 dark:text-gray-300">Last Release:</span> {formatDate(analysis.lastReleaseDate)}</p>
+            <p><span className="font-medium text-gray-700 dark:text-gray-300">Commits (90d):</span> {analysis.commitCount}</p>
+            <p><span className="font-medium text-gray-700 dark:text-gray-300">Contributors:</span> {analysis.contributorCount}</p>
+            <p><span className="font-medium text-gray-700 dark:text-gray-300">Open / Closed Issues:</span> {analysis.openIssueCount} / {analysis.closedIssueCount}</p>
+            {repoData.license && (
+              <p><span className="font-medium text-gray-700 dark:text-gray-300">License:</span> {repoData.license.spdx_id}</p>
+            )}
+          </div>
         </div>
 
         {/* Share + Reset */}
