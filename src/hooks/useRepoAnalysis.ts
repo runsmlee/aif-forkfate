@@ -57,11 +57,14 @@ export function useRepoAnalysis() {
         // Update URL hash for shareable links
         window.location.hash = repo;
 
-        // Persist to localStorage (dedup by repo name)
+        // Persist to localStorage (dedup by repo name) and track score delta
         setHistory((prev) => {
+          const previous = prev.find((a) => a.repo === repo);
+          if (previous) {
+            analysis.previousScore = previous.score.total;
+          }
           const filtered = prev.filter((a) => a.repo !== repo);
-          const updated = [analysis, ...filtered].slice(0, MAX_HISTORY);
-          return updated;
+          return [analysis, ...filtered].slice(0, MAX_HISTORY);
         });
 
         return analysis;

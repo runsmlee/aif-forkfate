@@ -38,6 +38,22 @@ function getScoreColor(grade: string): string {
   }
 }
 
+function ScoreDelta({ current, previous }: { current: number; previous: number }): JSX.Element {
+  const delta = current - previous;
+  const sign = delta > 0 ? '+' : '';
+  const colorClass = delta > 0
+    ? 'text-green-600 dark:text-green-400'
+    : delta < 0
+      ? 'text-red-600 dark:text-red-400'
+      : 'text-gray-400 dark:text-gray-500';
+
+  return (
+    <span className={`text-xs font-bold tabular-nums ${colorClass}`} aria-label={`Score changed by ${sign}${delta}`}>
+      {sign}{delta}
+    </span>
+  );
+}
+
 function timeAgo(iso: string): string {
   const seconds = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
   if (seconds < 60) return 'just now';
@@ -77,6 +93,9 @@ export function RecentAnalyses({ history, onSelect, onClear }: RecentAnalysesPro
             </div>
             <div className="flex items-center gap-3 flex-shrink-0">
               <span className={`text-lg font-bold tabular-nums ${getScoreColor(a.score.grade)}`}>{a.score.total}</span>
+              {a.previousScore !== undefined && (
+                <ScoreDelta current={a.score.total} previous={a.previousScore} />
+              )}
               <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${getGradeColor(a.score.grade)}`}>
                 {a.score.grade}
               </span>

@@ -2,7 +2,6 @@ import { lazy, Suspense, useEffect, useCallback, useRef } from 'react';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import type { HeroHandle } from './components/Hero';
-import { RecentAnalyses } from './components/RecentAnalyses';
 import { Footer } from './components/Footer';
 import { AnalysisSkeleton } from './components/Skeleton';
 import { useRepoAnalysis } from './hooks/useRepoAnalysis';
@@ -13,6 +12,10 @@ const ScoreDisplay = lazy(() =>
 
 const HowItWorks = lazy(() =>
   import('./components/HowItWorks').then((m) => ({ default: m.HowItWorks }))
+);
+
+const RecentAnalyses = lazy(() =>
+  import('./components/RecentAnalyses').then((m) => ({ default: m.RecentAnalyses }))
 );
 
 declare global {
@@ -117,11 +120,13 @@ export default function App(): JSX.Element {
               </div>
             )}
 
-            <RecentAnalyses
-              history={history}
-              onSelect={handleSelectHistory}
-              onClear={handleClearHistory}
-            />
+            <Suspense fallback={null}>
+              <RecentAnalyses
+                history={history}
+                onSelect={handleSelectHistory}
+                onClear={handleClearHistory}
+              />
+            </Suspense>
 
             <Suspense fallback={null}>
               <HowItWorks />

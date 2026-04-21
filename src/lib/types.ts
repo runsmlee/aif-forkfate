@@ -54,6 +54,7 @@ export interface RepoAnalysis {
   closedIssueCount: number;
   lastCommitDate: string | null;
   lastReleaseDate: string | null;
+  previousScore?: number;
 }
 
 export interface ReliabilityScore {

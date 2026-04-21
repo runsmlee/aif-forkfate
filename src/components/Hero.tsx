@@ -38,7 +38,7 @@ export const Hero = forwardRef<HeroHandle, HeroProps>(function Hero({ onAnalyze,
   };
 
   return (
-    <section className="py-16 sm:py-24 px-4 sm:px-6" aria-label="Search for a repository">
+    <section className="py-16 sm:py-24 px-4 sm:px-6" role="search" aria-label="Search for a repository">
       <div className="max-w-2xl mx-auto text-center">
         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-gray-100 tracking-tight mb-4">
           Instantly Quantify
@@ -71,6 +71,7 @@ export const Hero = forwardRef<HeroHandle, HeroProps>(function Hero({ onAnalyze,
                 className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-sm sm:text-base transition-shadow"
                 autoComplete="off"
                 spellCheck={false}
+                disabled={status === 'loading'}
               />
             </div>
             <button

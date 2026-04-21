@@ -85,10 +85,10 @@ describe('ScoreDisplay', () => {
 
   it('renders all four metric breakdowns', () => {
     render(<ScoreDisplay analysis={mockAnalysis} onReset={() => {}} />);
-    expect(screen.getByText('Commit Activity')).toBeInTheDocument();
-    expect(screen.getByText('Issue Health')).toBeInTheDocument();
-    expect(screen.getByText('Contributor Diversity')).toBeInTheDocument();
-    expect(screen.getByText('Freshness')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Commit Activity' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Issue Health' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Contributor Diversity' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Freshness' })).toBeInTheDocument();
   });
 
   it('renders metric descriptions', () => {

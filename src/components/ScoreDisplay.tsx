@@ -2,6 +2,7 @@ import type { RepoAnalysis } from '../lib/types';
 import { MetricCard } from './MetricCard';
 import { ScoreGauge } from './ScoreGauge';
 import { ShareButton } from './ShareButton';
+import { Recommendations } from './Recommendations';
 import { useAnimatedCounter } from '../hooks/useAnimatedCounter';
 
 interface ScoreDisplayProps {
@@ -26,6 +27,22 @@ const gradeColors: Record<string, string> = {
   D: 'from-orange-400 to-orange-600',
   F: 'from-red-400 to-red-600',
 };
+
+function ScoreDeltaDisplay({ current, previous }: { current: number; previous: number }): JSX.Element {
+  const delta = current - previous;
+  const sign = delta > 0 ? '+' : '';
+  const colorClass = delta > 0
+    ? 'text-green-500'
+    : delta < 0
+      ? 'text-red-500'
+      : 'text-gray-400';
+
+  return (
+    <span className={`ml-2 text-xs font-semibold ${colorClass}`} aria-label={`Score changed by ${sign}${delta} from previous analysis`}>
+      ({sign}{delta})
+    </span>
+  );
+}
 
 const METRIC_ICONS = ['🔥', '🐛', '👥', '🕐'];
 
@@ -69,6 +86,9 @@ export function ScoreDisplay({ analysis, onReset }: ScoreDisplayProps): JSX.Elem
               </span>
               <p className="text-sm text-gray-400 dark:text-gray-500 mt-1 tabular-nums">
                 {animatedTotal}/100
+                {analysis.previousScore !== undefined && (
+                  <ScoreDeltaDisplay current={score.total} previous={analysis.previousScore} />
+                )}
               </p>
             </div>
           </div>
@@ -117,6 +137,9 @@ export function ScoreDisplay({ analysis, onReset }: ScoreDisplayProps): JSX.Elem
             )}
           </div>
         </div>
+
+        {/* Recommendations */}
+        <Recommendations breakdown={score.breakdown} />
 
         {/* Share + Reset */}
         <div className="flex items-center justify-center gap-3">

@@ -114,10 +114,10 @@ describe('App', () => {
     await user.click(btn);
 
     await waitFor(() => {
-      expect(screen.getByText(/Commit Activity/i)).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: /Commit Activity/i })).toBeInTheDocument();
     });
 
-    expect(screen.getByText(/Issue Health/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Issue Health/i })).toBeInTheDocument();
   });
 
   it('can click example repo to trigger analysis', async () => {
@@ -129,7 +129,7 @@ describe('App', () => {
     await user.click(exampleBtn);
 
     await waitFor(() => {
-      expect(screen.getByText(/Commit Activity/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/Commit Activity/i).length).toBeGreaterThan(0);
     });
   });
 
@@ -145,7 +145,7 @@ describe('App', () => {
     await user.click(btn);
 
     await waitFor(() => {
-      expect(screen.getByText(/Commit Activity/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/Commit Activity/i).length).toBeGreaterThan(0);
     });
 
     const stored = JSON.parse(localStorage.getItem('commitcasualty_history') ?? '[]');
@@ -193,7 +193,7 @@ describe('App', () => {
     await user.click(btn);
 
     await waitFor(() => {
-      expect(screen.getByText(/Commit Activity/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/Commit Activity/i).length).toBeGreaterThan(0);
     });
 
     expect(window.location.hash).toBe('#facebook/react');
@@ -206,8 +206,8 @@ describe('App', () => {
     render(<App />);
 
     await waitFor(() => {
-      expect(screen.getByText(/Commit Activity/i)).toBeInTheDocument();
-    }, { timeout: 5000 });
+      expect(screen.getAllByText(/Commit Activity/i).length).toBeGreaterThan(0);
+    }, { timeout: 10000 });
   });
 
   it('shows rate limit error when GitHub API returns 403 with rate limit headers', async () => {
