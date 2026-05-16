@@ -86,3 +86,8 @@
 .tabular-nums {
   font-variant-numeric: tabular-nums;
 }
+
+/* Shimmer animation needs background-size for smooth looping */
+.animate-shimmer {
+  background-size: 200% 100%;
+}

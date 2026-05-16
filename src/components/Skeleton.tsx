@@ -5,9 +5,11 @@ interface SkeletonProps {
 export function Skeleton({ className = '' }: SkeletonProps): JSX.Element {
   return (
     <div
-      className={`animate-pulse bg-gray-200 dark:bg-gray-700 rounded ${className}`}
+      className={`relative overflow-hidden bg-gray-200 dark:bg-gray-700 rounded ${className}`}
       aria-hidden="true"
-    />
+    >
+      <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/40 dark:via-white/10 to-transparent" />
+    </div>
   );
 }
 

@@ -75,7 +75,7 @@ export function ScoreDisplay({ analysis, onReset }: ScoreDisplayProps): JSX.Elem
             </p>
           )}
 
-          <div className="flex items-center justify-center gap-6 mb-3">
+          <div className="flex items-center justify-center gap-4 sm:gap-6 mb-3">
             <ScoreGauge score={score.total} grade={score.grade} />
             <div className="flex flex-col items-start">
               <span
