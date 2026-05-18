@@ -1,10 +1,3 @@
-import type { JSX as ReactJSX } from 'react';
-
-declare global {
-  namespace JSX {
-    interface Element extends ReactJSX.Element {}
-    interface IntrinsicElements extends ReactJSX.IntrinsicElements {}
-  }
-}
-
+// React 18 provides JSX types via @types/react
+// This file is intentionally minimal
 export {};
