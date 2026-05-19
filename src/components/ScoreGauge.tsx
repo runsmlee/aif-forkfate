@@ -12,7 +12,7 @@ const GRADE_COLORS: Record<string, string> = {
   B: '#3B82F6',
   C: '#F59E0B',
   D: '#F97316',
-  F: '#EF4444',
+  F: '#B91C1C',
 };
 
 function getGradeColor(grade: string): string {

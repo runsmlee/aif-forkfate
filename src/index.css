@@ -18,7 +18,7 @@
 
   /* Focus ring styles for accessibility */
   *:focus-visible {
-    outline: 2px solid #EF4444;
+    outline: 2px solid #B91C1C;
     outline-offset: 2px;
   }
 }
@@ -31,16 +31,16 @@
       transition-colors duration-200
       focus:outline-none focus:ring-2 focus:ring-offset-2
       disabled:opacity-50 disabled:cursor-not-allowed;
-    background-color: #EF4444;
-    --tw-ring-color: #EF4444;
+    background-color: #B91C1C;
+    --tw-ring-color: #B91C1C;
   }
 
   .btn-primary:hover {
-    background-color: #DC2626;
+    background-color: #991B1B;
   }
 
   .btn-primary:active {
-    background-color: #B91C1C;
+    background-color: #7F1D1D;
   }
 
   .btn-secondary {
@@ -50,7 +50,7 @@
       hover:bg-gray-50 active:bg-gray-100
       transition-colors duration-200
       focus:outline-none focus:ring-2 focus:ring-offset-2;
-    --tw-ring-color: #EF4444;
+    --tw-ring-color: #B91C1C;
   }
 
   .dark .btn-secondary {

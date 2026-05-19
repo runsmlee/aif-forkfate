@@ -45,7 +45,7 @@ function ScoreDelta({ current, previous }: { current: number; previous: number }
     ? 'text-green-600 dark:text-green-400'
     : delta < 0
       ? 'text-red-600 dark:text-red-400'
-      : 'text-gray-400 dark:text-gray-500';
+      : 'text-gray-600 dark:text-gray-400';
 
   return (
     <span className={`text-xs font-bold tabular-nums ${colorClass}`} aria-label={`Score changed by ${sign}${delta}`}>
@@ -74,7 +74,7 @@ export function RecentAnalyses({ history, onSelect, onClear }: RecentAnalysesPro
         <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">Recent Analyses</h2>
         <button
           onClick={onClear}
-          className="text-xs text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 transition-colors px-2 py-1 -mr-2 rounded hover:bg-red-50 dark:hover:bg-red-900/10"
+          className="text-xs text-red-700 dark:text-red-300 hover:text-red-800 dark:hover:text-red-200 transition-colors px-2 py-1 -mr-2 rounded hover:bg-red-50 dark:hover:bg-red-900/10"
           aria-label="Clear analysis history"
         >
           Clear all
@@ -89,7 +89,7 @@ export function RecentAnalyses({ history, onSelect, onClear }: RecentAnalysesPro
           >
             <div className="min-w-0 flex-1 mr-3">
               <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">{a.repo}</p>
-              <p className="text-xs text-gray-400 dark:text-gray-500">{timeAgo(a.timestamp)}</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400">{timeAgo(a.timestamp)}</p>
             </div>
             <div className="flex items-center gap-3 flex-shrink-0">
               <span className={`text-lg font-bold tabular-nums ${getScoreColor(a.score.grade)}`}>{a.score.total}</span>

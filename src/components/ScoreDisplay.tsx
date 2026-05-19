@@ -20,12 +20,12 @@ function formatDate(iso: string | null): string {
 }
 
 const gradeColors: Record<string, string> = {
-  'A+': 'from-green-400 to-emerald-600',
-  A: 'from-green-500 to-green-700',
-  B: 'from-blue-400 to-blue-600',
-  C: 'from-yellow-400 to-yellow-600',
-  D: 'from-orange-400 to-orange-600',
-  F: 'from-red-400 to-red-600',
+  'A+': 'text-emerald-600 dark:text-emerald-400',
+  A: 'text-green-600 dark:text-green-400',
+  B: 'text-blue-600 dark:text-blue-400',
+  C: 'text-yellow-600 dark:text-yellow-400',
+  D: 'text-orange-600 dark:text-orange-400',
+  F: 'text-red-700 dark:text-red-400',
 };
 
 function ScoreDeltaDisplay({ current, previous }: { current: number; previous: number }): JSX.Element {
@@ -35,7 +35,7 @@ function ScoreDeltaDisplay({ current, previous }: { current: number; previous: n
     ? 'text-green-500'
     : delta < 0
       ? 'text-red-500'
-      : 'text-gray-400';
+      : 'text-gray-600 dark:text-gray-400';
 
   return (
     <span className={`ml-2 text-xs font-semibold ${colorClass}`} aria-label={`Score changed by ${sign}${delta} from previous analysis`}>
@@ -79,12 +79,12 @@ export function ScoreDisplay({ analysis, onReset }: ScoreDisplayProps): JSX.Elem
             <ScoreGauge score={score.total} grade={score.grade} />
             <div className="flex flex-col items-start">
               <span
-                className={`text-5xl sm:text-6xl font-extrabold bg-gradient-to-br ${gradeColors[score.grade] ?? 'from-gray-400 to-gray-600'} bg-clip-text text-transparent`}
+                className={`text-5xl sm:text-6xl font-extrabold ${gradeColors[score.grade] ?? 'text-gray-700 dark:text-gray-300'}`}
                 aria-label={`Reliability grade: ${score.grade}`}
               >
                 {score.grade}
               </span>
-              <p className="text-sm text-gray-400 dark:text-gray-500 mt-1 tabular-nums">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 tabular-nums">
                 {animatedTotal}/100
                 {analysis.previousScore !== undefined && (
                   <ScoreDeltaDisplay current={score.total} previous={analysis.previousScore} />

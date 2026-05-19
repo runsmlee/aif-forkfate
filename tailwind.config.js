@@ -6,9 +6,9 @@ export default {
     extend: {
       colors: {
         brand: {
-          DEFAULT: '#EF4444',
-          dark: '#DC2626',
-          light: '#F87171',
+          DEFAULT: '#B91C1C',
+          dark: '#991B1B',
+          light: '#EF4444',
           50: '#FEF2F2',
           100: '#FEE2E2',
         },
@@ -51,7 +51,7 @@ export default {
       boxShadow: {
         'card': '0 1px 3px 0 rgb(0 0 0 / 0.04), 0 1px 2px -1px rgb(0 0 0 / 0.04)',
         'card-hover': '0 4px 12px -2px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.04)',
-        'brand': '0 1px 3px 0 rgb(239 68 68 / 0.2), 0 1px 2px -1px rgb(239 68 68 / 0.1)',
+        'brand': '0 1px 3px 0 rgb(185 28 28 / 0.2), 0 1px 2px -1px rgb(185 28 28 / 0.1)',
         'panel': '-4px 0 24px -4px rgb(0 0 0 / 0.12)',
         'panel-dark': '-4px 0 24px -4px rgb(0 0 0 / 0.4)',
       },
