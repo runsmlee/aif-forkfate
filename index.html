@@ -3,15 +3,43 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="CommitCasualty — Instantly quantify open-source reliability. Enter any GitHub repo for a real-time score." />
-    <meta property="og:title" content="CommitCasualty — Open-Source Reliability Scores" />
-    <meta property="og:description" content="Quantify GitHub repository reliability with deterministic metrics." />
-    <meta property="og:type" content="website" />
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✅</text></svg>" />
     <title>CommitCasualty — Instantly Quantify Open-Source Reliability</title>
+    <meta name="description" content="Enter any GitHub repository to instantly get a deterministic reliability score based on commit activity, issue health, contributor diversity, and freshness." />
+    <meta property="og:title" content="CommitCasualty — Instantly Quantify Open-Source Reliability" />
+    <meta property="og:description" content="Enter any GitHub repository to instantly get a deterministic reliability score based on commit activity, issue health, contributor diversity, and freshness." />
+    <meta property="og:type" content="website" />
+    <meta name="aif-mvp-id" content="%VITE_MVP_ID%" />
+    <meta name="aif-api" content="https://www.aifounders.live/api/analytics" />
+    <script async src="https://www.aifounders.live/aif.js"></script>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✅</text></svg>" />
+    <style>
+      /* Pre-hydration skeleton — visible before JS loads */
+      .app-skeleton{max-width:42rem;margin:0 auto;padding:4rem 1rem;text-align:center;font-family:system-ui,-apple-system,sans-serif}
+      .app-skeleton h1{font-size:1.875rem;font-weight:700;color:#111827;margin-bottom:.5rem}
+      .app-skeleton p{color:#6b7280;font-size:1rem;margin-bottom:2rem}
+      .app-skeleton-bar{height:3rem;background:#f3f4f6;border-radius:.5rem;margin-bottom:1rem;max-width:36rem;margin-left:auto;margin-right:auto}
+      .app-skeleton-pills{display:flex;gap:.5rem;justify-content:center;margin-top:1rem}
+      .app-skeleton-pill{width:5rem;height:1.5rem;background:#f3f4f6;border-radius:9999px}
+    </style>
   </head>
   <body class="bg-white text-gray-900">
-    <div id="root"></div>
+    <div id="root">
+      <header style="border-bottom:1px solid #f3f4f6;padding:.75rem 1rem">
+        <div style="max-width:56rem;margin:0 auto;display:flex;align-items:center;justify-content:space-between">
+          <span style="font-weight:700;font-size:1.125rem;color:#111827">CommitCasualty</span>
+        </div>
+      </header>
+      <div class="app-skeleton">
+        <h1>Instantly Quantify Open-Source Reliability</h1>
+        <p>Enter any GitHub repository to get a real-time reliability score based on commit activity, issue health, contributor diversity, and freshness.</p>
+        <div class="app-skeleton-bar"></div>
+        <div class="app-skeleton-pills">
+          <div class="app-skeleton-pill"></div>
+          <div class="app-skeleton-pill"></div>
+          <div class="app-skeleton-pill"></div>
+        </div>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

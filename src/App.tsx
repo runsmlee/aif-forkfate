@@ -18,14 +18,6 @@ const RecentAnalyses = lazy(() =>
   import('./components/RecentAnalyses').then((m) => ({ default: m.RecentAnalyses }))
 );
 
-declare global {
-  interface Window {
-    aif?: {
-      track: (event: string, data?: Record<string, unknown>) => void;
-    };
-  }
-}
-
 export default function App(): JSX.Element {
   const { history, currentAnalysis, status, error, analyze, reset, clearHistory, dismissError } = useRepoAnalysis();
   const heroRef = useRef<HeroHandle>(null);
