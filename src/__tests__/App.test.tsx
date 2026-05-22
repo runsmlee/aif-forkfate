@@ -77,7 +77,7 @@ describe('App', () => {
 
   it('renders the hero section with search input', () => {
     render(<App />);
-    expect(screen.getByRole('heading', { name: /instantly quantify/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /90% of forks are dead/i })).toBeInTheDocument();
     expect(screen.getByLabelText(/github repository/i)).toBeInTheDocument();
   });
 
@@ -114,10 +114,10 @@ describe('App', () => {
     await user.click(btn);
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: /Commit Activity/i })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: /Fork Activity/i })).toBeInTheDocument();
     });
 
-    expect(screen.getByRole('heading', { name: /Issue Health/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Community Vitality/i })).toBeInTheDocument();
   });
 
   it('can click example repo to trigger analysis', async () => {
@@ -129,7 +129,7 @@ describe('App', () => {
     await user.click(exampleBtn);
 
     await waitFor(() => {
-      expect(screen.getAllByText(/Commit Activity/i).length).toBeGreaterThan(0);
+      expect(screen.getAllByText(/Fork Activity/i).length).toBeGreaterThan(0);
     });
   });
 
@@ -145,10 +145,10 @@ describe('App', () => {
     await user.click(btn);
 
     await waitFor(() => {
-      expect(screen.getAllByText(/Commit Activity/i).length).toBeGreaterThan(0);
+      expect(screen.getAllByText(/Fork Activity/i).length).toBeGreaterThan(0);
     });
 
-    const stored = JSON.parse(localStorage.getItem('commitcasualty_history') ?? '[]');
+    const stored = JSON.parse(localStorage.getItem('forkfate_history') ?? '[]');
     expect(stored).toHaveLength(1);
     expect(stored[0].repo).toBe('facebook/react');
   });
@@ -178,7 +178,7 @@ describe('App', () => {
   it('wraps the app in an ErrorBoundary', () => {
     render(<App />);
     // The app should render normally without errors (ErrorBoundary passes through)
-    expect(screen.getByRole('heading', { name: /instantly quantify/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /90% of forks are dead/i })).toBeInTheDocument();
   });
 
   it('updates URL hash when analysis completes', async () => {
@@ -193,7 +193,7 @@ describe('App', () => {
     await user.click(btn);
 
     await waitFor(() => {
-      expect(screen.getAllByText(/Commit Activity/i).length).toBeGreaterThan(0);
+      expect(screen.getAllByText(/Fork Activity/i).length).toBeGreaterThan(0);
     });
 
     expect(window.location.hash).toBe('#facebook/react');
@@ -206,7 +206,7 @@ describe('App', () => {
     render(<App />);
 
     await waitFor(() => {
-      expect(screen.getAllByText(/Commit Activity/i).length).toBeGreaterThan(0);
+      expect(screen.getAllByText(/Fork Activity/i).length).toBeGreaterThan(0);
     }, { timeout: 10000 });
   });
 

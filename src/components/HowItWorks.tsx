@@ -3,30 +3,30 @@ import { memo } from 'react';
 const METRICS = [
   {
     icon: '🔥',
-    title: 'Commit Activity',
+    title: 'Fork Activity',
     description:
-      'Measures how active a project is by counting non-merge commits over the last 90 days. Expectations scale with project popularity.',
+      'Measures how actively the project is being developed by counting non-merge commits over the last 90 days. Active projects sustain healthier fork ecosystems.',
     maxScore: 25,
   },
   {
     icon: '🐛',
-    title: 'Issue Health',
+    title: 'Community Vitality',
     description:
-      'Evaluates whether issues are being resolved by analyzing the ratio of closed to total issues. A healthy project closes issues regularly.',
+      'Evaluates whether the community is engaged by analyzing the ratio of closed to total issues. Active issue resolution signals a living fork ecosystem.',
     maxScore: 25,
   },
   {
     icon: '👥',
-    title: 'Contributor Diversity',
+    title: 'Ecosystem Diversity',
     description:
-      'Assesses the breadth of community support by counting contributors and checking whether commit distribution is healthy across the team.',
+      'Assesses the breadth of contributor support by counting contributors and checking whether development effort is distributed across the ecosystem.',
     maxScore: 25,
   },
   {
     icon: '🕐',
-    title: 'Freshness',
+    title: 'Evolutionary Freshness',
     description:
-      'Checks how recently the project was last updated and whether a recent release exists. Stale projects lose points over time.',
+      'Checks how recently the project evolved and whether a recent release exists. Stale projects produce dead forks; fresh ones produce evolving forks.',
     maxScore: 25,
   },
 ];
@@ -40,8 +40,8 @@ export const HowItWorks = memo(function HowItWorks(): JSX.Element {
             How It Works
           </h2>
           <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 max-w-lg mx-auto">
-            We analyze real GitHub API data to compute a reliability score out of 100.
-            All scoring is deterministic — no AI involved, just transparent metrics.
+            We analyze real GitHub API data to compute a Fork Survival Score out of 100.
+            All scoring is deterministic — transparent metrics that reveal which forks thrive.
           </p>
         </div>
 

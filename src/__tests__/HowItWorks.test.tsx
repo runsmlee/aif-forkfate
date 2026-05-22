@@ -10,23 +10,22 @@ describe('HowItWorks', () => {
 
   it('describes all four scoring metrics', () => {
     render(<HowItWorks />);
-    expect(screen.getByText('Commit Activity')).toBeInTheDocument();
-    expect(screen.getByText('Issue Health')).toBeInTheDocument();
-    expect(screen.getByText('Contributor Diversity')).toBeInTheDocument();
-    expect(screen.getByText('Freshness')).toBeInTheDocument();
+    expect(screen.getByText('Fork Activity')).toBeInTheDocument();
+    expect(screen.getByText('Community Vitality')).toBeInTheDocument();
+    expect(screen.getByText('Ecosystem Diversity')).toBeInTheDocument();
+    expect(screen.getByText('Evolutionary Freshness')).toBeInTheDocument();
   });
 
   it('explains what each metric measures', () => {
     render(<HowItWorks />);
-    // Each metric card has a description — check that descriptions exist
-    // Commit Activity: mentions commits and 90 days
+    // Fork Activity: mentions commits and 90 days
     expect(screen.getByText(/non-merge commits over the last 90 days/i)).toBeInTheDocument();
-    // Issue Health: mentions ratio of closed
-    expect(screen.getByText(/ratio of closed to total/i)).toBeInTheDocument();
-    // Contributor Diversity: mentions community
-    expect(screen.getByText(/breadth of community support/i)).toBeInTheDocument();
-    // Freshness: mentions release
-    expect(screen.getByText(/recent release exists/i)).toBeInTheDocument();
+    // Community Vitality: mentions issue resolution
+    expect(screen.getByText(/issue resolution/i)).toBeInTheDocument();
+    // Ecosystem Diversity: mentions contributor support
+    expect(screen.getByText(/contributor support/i)).toBeInTheDocument();
+    // Evolutionary Freshness: mentions evolving forks
+    expect(screen.getByText(/fresh ones produce evolving forks/i)).toBeInTheDocument();
   });
 
   it('mentions that scores are deterministic', () => {

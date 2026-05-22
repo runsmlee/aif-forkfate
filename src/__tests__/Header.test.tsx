@@ -12,7 +12,7 @@ describe('Header', () => {
 
   it('renders the brand name', () => {
     render(<Header />);
-    expect(screen.getByText('CommitCasualty')).toBeInTheDocument();
+    expect(screen.getByText('ForkFate')).toBeInTheDocument();
   });
 
   it('renders a dark mode toggle button', () => {
@@ -47,7 +47,7 @@ describe('Header', () => {
 
   it('renders a home link', () => {
     render(<Header />);
-    const home = screen.getByRole('link', { name: /commitcasualty home/i });
+    const home = screen.getByRole('link', { name: /forkfate home/i });
     expect(home).toBeInTheDocument();
   });
 });

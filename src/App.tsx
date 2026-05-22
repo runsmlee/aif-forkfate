@@ -68,9 +68,9 @@ export default function App(): JSX.Element {
   // Update document title when viewing analysis
   useEffect(() => {
     if (currentAnalysis) {
-      document.title = `${currentAnalysis.repo} — Score ${currentAnalysis.score.total}/100 (${currentAnalysis.score.grade}) | CommitCasualty`;
+      document.title = `${currentAnalysis.repo} — Fork Survival Score ${currentAnalysis.score.total}/100 (${currentAnalysis.score.grade}) | ForkFate`;
     } else {
-      document.title = 'CommitCasualty — Instantly Quantify Open-Source Reliability';
+      document.title = 'ForkFate — See Which Forks Survived';
     }
   }, [currentAnalysis]);
 

@@ -1,5 +1,5 @@
 {
-  "name": "commitcasualty",
+  "name": "forkfate",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -17,7 +17,7 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
-    "@types/react": "^18.3.28",
+    "@types/react": "^18.3.29",
     "@types/react-dom": "^18.3.7",
     "@vitejs/plugin-react": "^4.7.0",
     "autoprefixer": "^10.5.0",
@@ -31,5 +31,5 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "CommitCasualty — Instantly Quantify Open-Source Reliability"
+  "description": "ForkFate — See Which Forks Survived"
 }

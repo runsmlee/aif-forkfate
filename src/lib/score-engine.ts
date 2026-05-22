@@ -1,4 +1,4 @@
-// CommitCasualty — Deterministic reliability scoring engine
+// ForkFate — Deterministic fork survival scoring engine
 import type {
   ReliabilityScore,
   ScoreBreakdown,
@@ -54,7 +54,7 @@ function scoreCommitActivity(commitCount: number, stargazers: number): MetricSco
   return {
     score: clampScore(score),
     max: MAX_PER_METRIC,
-    label: 'Commit Activity',
+    label: 'Fork Activity',
     description,
   };
 }
@@ -97,7 +97,7 @@ function scoreIssueHealth(open: GitHubIssue[], closed: GitHubIssue[]): MetricSco
   return {
     score: clampScore(score),
     max: MAX_PER_METRIC,
-    label: 'Issue Health',
+    label: 'Community Vitality',
     description,
   };
 }
@@ -153,7 +153,7 @@ function scoreContributorDiversity(contributors: GitHubContributor[]): MetricSco
   return {
     score: clampScore(score),
     max: MAX_PER_METRIC,
-    label: 'Contributor Diversity',
+    label: 'Ecosystem Diversity',
     description,
   };
 }
@@ -207,7 +207,7 @@ function scoreFreshness(
   return {
     score: clampScore(score),
     max: MAX_PER_METRIC,
-    label: 'Freshness',
+    label: 'Evolutionary Freshness',
     description,
   };
 }
@@ -221,17 +221,17 @@ export function computeReliabilityScore(params: {
   latestRelease: { tag_name: string; published_at: string } | null;
 }): ReliabilityScore {
   const breakdown: ScoreBreakdown = {
-    commitActivity: scoreCommitActivity(params.commitCount, params.repoData.stargazers_count),
-    issueHealth: scoreIssueHealth(params.openIssues, params.closedIssues),
-    contributorDiversity: scoreContributorDiversity(params.contributors),
-    freshness: scoreFreshness(params.repoData.pushed_at, params.latestRelease),
+    forkActivity: scoreCommitActivity(params.commitCount, params.repoData.stargazers_count),
+    communityVitality: scoreIssueHealth(params.openIssues, params.closedIssues),
+    ecosystemDiversity: scoreContributorDiversity(params.contributors),
+    evolutionaryFreshness: scoreFreshness(params.repoData.pushed_at, params.latestRelease),
   };
 
   const total =
-    breakdown.commitActivity.score +
-    breakdown.issueHealth.score +
-    breakdown.contributorDiversity.score +
-    breakdown.freshness.score;
+    breakdown.forkActivity.score +
+    breakdown.communityVitality.score +
+    breakdown.ecosystemDiversity.score +
+    breakdown.evolutionaryFreshness.score;
 
   return {
     total,

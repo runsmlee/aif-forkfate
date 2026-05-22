@@ -5,12 +5,12 @@ import { Footer } from '../components/Footer';
 describe('Footer', () => {
   it('renders the brand name', () => {
     render(<Footer />);
-    expect(screen.getByText('CommitCasualty')).toBeInTheDocument();
+    expect(screen.getByText('ForkFate')).toBeInTheDocument();
   });
 
   it('renders the tagline', () => {
     render(<Footer />);
-    expect(screen.getByText(/Instantly Quantify Open-Source Reliability/)).toBeInTheDocument();
+    expect(screen.getByText(/See Which Forks Survived/)).toBeInTheDocument();
   });
 
   it('has the contentinfo role for accessibility', () => {

@@ -11,51 +11,51 @@ function getRecommendationForMetric(metric: MetricScore): Recommendation | null 
   const pct = (metric.score / metric.max) * 100;
 
   switch (metric.label) {
-    case 'Commit Activity':
+    case 'Fork Activity':
       if (pct < 10) {
-        return { metric: 'Commit Activity', severity: 'critical', message: 'No recent commits detected — the project may be abandoned. Consider checking if a fork is actively maintained.' };
+        return { metric: 'Fork Activity', severity: 'critical', message: 'No recent commits detected — forks of this project are likely dead. Consider finding an actively maintained fork.' };
       }
       if (pct < 40) {
-        return { metric: 'Commit Activity', severity: 'warning', message: 'Low commit activity — verify the project is still being actively maintained before adopting.' };
+        return { metric: 'Fork Activity', severity: 'warning', message: 'Low fork activity — most forks may be dormant. Verify whether active forks exist before depending on this project.' };
       }
       if (pct < 70) {
-        return { metric: 'Commit Activity', severity: 'info', message: 'Moderate commit activity — acceptable for smaller projects but worth monitoring.' };
+        return { metric: 'Fork Activity', severity: 'info', message: 'Moderate fork activity — some forks are actively maintained but the ecosystem is not thriving.' };
       }
       return null;
 
-    case 'Issue Health':
+    case 'Community Vitality':
       if (pct < 25) {
-        return { metric: 'Issue Health', severity: 'critical', message: 'Very low issue close rate — issues may not be getting attention from maintainers.' };
+        return { metric: 'Community Vitality', severity: 'critical', message: 'Very low issue close rate — the community is not engaged. Fork ecosystems need active communities to survive.' };
       }
       if (pct < 50) {
-        return { metric: 'Issue Health', severity: 'warning', message: 'Below-average issue close rate — check if open issues are being triaged and addressed.' };
+        return { metric: 'Community Vitality', severity: 'warning', message: 'Below-average community vitality — check if forks have their own active issue trackers.' };
       }
       if (pct < 75) {
-        return { metric: 'Issue Health', severity: 'info', message: 'Fair issue health — some issues may be lingering without resolution.' };
+        return { metric: 'Community Vitality', severity: 'info', message: 'Fair community vitality — engagement could be stronger to sustain a healthy fork tree.' };
       }
       return null;
 
-    case 'Contributor Diversity':
+    case 'Ecosystem Diversity':
       if (pct < 15) {
-        return { metric: 'Contributor Diversity', severity: 'critical', message: 'Very few contributors — high bus factor risk. The project may not survive if the maintainer leaves.' };
+        return { metric: 'Ecosystem Diversity', severity: 'critical', message: 'Very few contributors — high bus factor risk. The fork ecosystem may collapse if the maintainer leaves.' };
       }
       if (pct < 40) {
-        return { metric: 'Contributor Diversity', severity: 'warning', message: 'Limited contributor base — the project may depend on a small team for all development.' };
+        return { metric: 'Ecosystem Diversity', severity: 'warning', message: 'Limited ecosystem diversity — the project depends on a small team. Fork survival depends on maintainer continuity.' };
       }
       if (pct < 70) {
-        return { metric: 'Contributor Diversity', severity: 'info', message: 'Moderate contributor diversity — consider whether the community is growing.' };
+        return { metric: 'Ecosystem Diversity', severity: 'info', message: 'Moderate ecosystem diversity — the contributor base could be broader to support a thriving fork tree.' };
       }
       return null;
 
-    case 'Freshness':
+    case 'Evolutionary Freshness':
       if (pct < 15) {
-        return { metric: 'Freshness', severity: 'critical', message: 'Project is stale — dependencies may have security vulnerabilities. Verify compatibility before using.' };
+        return { metric: 'Evolutionary Freshness', severity: 'critical', message: 'Project is stale — forks are likely dead or diverging. Dependencies may have security vulnerabilities.' };
       }
       if (pct < 40) {
-        return { metric: 'Freshness', severity: 'warning', message: 'The project hasn\'t been updated recently — check for compatible dependencies and potential issues.' };
+        return { metric: 'Evolutionary Freshness', severity: 'warning', message: 'The project hasn\'t evolved recently — forks may be stagnating or forking without upstreaming changes.' };
       }
       if (pct < 75) {
-        return { metric: 'Freshness', severity: 'info', message: 'Moderate freshness — the project is active but not frequently updated.' };
+        return { metric: 'Evolutionary Freshness', severity: 'info', message: 'Moderate evolutionary freshness — the project is active but not rapidly evolving.' };
       }
       return null;
 
@@ -109,7 +109,7 @@ export const Recommendations = memo(function Recommendations({ breakdown }: Reco
           <div className="flex items-center gap-2">
             <span aria-hidden="true">✅</span>
             <p className="text-sm font-medium text-green-700 dark:text-green-400">
-              This is a healthy project with strong reliability across all metrics.
+              This is a healthy project with strong fork survival potential across all metrics.
             </p>
           </div>
         </div>

@@ -41,12 +41,11 @@ export const Hero = forwardRef<HeroHandle, HeroProps>(function Hero({ onAnalyze,
     <section className="py-16 sm:py-24 px-4 sm:px-6" role="search" aria-label="Search for a repository">
       <div className="max-w-2xl mx-auto text-center">
         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-gray-100 tracking-tight mb-4">
-          Instantly Quantify
-          <span className="text-brand-500 block sm:inline sm:ml-2">Open-Source Reliability</span>
+          90% of forks are dead.
+          <span className="text-brand-500 block sm:inline sm:ml-2">See which ones lived.</span>
         </h1>
         <p className="text-base sm:text-lg text-gray-500 dark:text-gray-400 mb-10 max-w-lg mx-auto">
-          Enter any GitHub repository to get a real-time reliability score based on commit activity,
-          issue health, contributor diversity, and freshness.
+          Enter a GitHub repo to see its Fork Survival Score — which forks are alive, dead, or evolving.
         </p>
 
         <form onSubmit={handleSubmit} className="max-w-xl mx-auto mb-8">

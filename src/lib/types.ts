@@ -1,4 +1,4 @@
-// CommitCasualty — Types for open-source reliability analysis
+// ForkFate — Types for fork survival analysis
 
 export interface GitHubRepo {
   id: number;
@@ -64,10 +64,10 @@ export interface ReliabilityScore {
 }
 
 export interface ScoreBreakdown {
-  commitActivity: MetricScore;
-  issueHealth: MetricScore;
-  contributorDiversity: MetricScore;
-  freshness: MetricScore;
+  forkActivity: MetricScore;
+  communityVitality: MetricScore;
+  ecosystemDiversity: MetricScore;
+  evolutionaryFreshness: MetricScore;
 }
 
 export interface MetricScore {

@@ -5,10 +5,10 @@ import type { ScoreBreakdown } from '../lib/types';
 
 function makeBreakdown(overrides: Partial<ScoreBreakdown> = {}): ScoreBreakdown {
   return {
-    commitActivity: { score: 22, max: 25, label: 'Commit Activity', description: 'Excellent' },
-    issueHealth: { score: 22, max: 25, label: 'Issue Health', description: 'Excellent' },
-    contributorDiversity: { score: 22, max: 25, label: 'Contributor Diversity', description: 'Excellent' },
-    freshness: { score: 22, max: 25, label: 'Freshness', description: 'Excellent' },
+    forkActivity: { score: 22, max: 25, label: 'Fork Activity', description: 'Excellent' },
+    communityVitality: { score: 22, max: 25, label: 'Community Vitality', description: 'Excellent' },
+    ecosystemDiversity: { score: 22, max: 25, label: 'Ecosystem Diversity', description: 'Excellent' },
+    evolutionaryFreshness: { score: 22, max: 25, label: 'Evolutionary Freshness', description: 'Excellent' },
     ...overrides,
   };
 }
@@ -21,64 +21,64 @@ describe('Recommendations', () => {
 
   it('shows a positive message when all scores are high', () => {
     render(<Recommendations breakdown={makeBreakdown()} />);
-    expect(screen.getByText(/healthy project/i)).toBeInTheDocument();
+    expect(screen.getByText(/fork survival potential/i)).toBeInTheDocument();
   });
 
-  it('shows a critical recommendation when commit activity is very low', () => {
+  it('shows a critical recommendation when fork activity is very low', () => {
     render(
       <Recommendations
         breakdown={makeBreakdown({
-          commitActivity: { score: 0, max: 25, label: 'Commit Activity', description: 'No commits' },
+          forkActivity: { score: 0, max: 25, label: 'Fork Activity', description: 'No commits' },
         })}
       />
     );
-    expect(screen.getByText(/commit activity/i)).toBeInTheDocument();
-    expect(screen.getByText(/no recent commit/i)).toBeInTheDocument();
+    expect(screen.getByText(/Fork Activity/i)).toBeInTheDocument();
+    expect(screen.getByText(/forks of this project are likely dead/i)).toBeInTheDocument();
   });
 
-  it('shows a warning when issue health is low', () => {
+  it('shows a warning when community vitality is low', () => {
     render(
       <Recommendations
         breakdown={makeBreakdown({
-          issueHealth: { score: 5, max: 25, label: 'Issue Health', description: 'Low close rate' },
+          communityVitality: { score: 5, max: 25, label: 'Community Vitality', description: 'Low close rate' },
         })}
       />
     );
-    expect(screen.getByText(/issue health/i)).toBeInTheDocument();
+    expect(screen.getByText(/Community Vitality/i)).toBeInTheDocument();
     expect(screen.getByText(/close rate/i)).toBeInTheDocument();
   });
 
-  it('shows a warning when contributor diversity is low', () => {
+  it('shows a warning when ecosystem diversity is low', () => {
     render(
       <Recommendations
         breakdown={makeBreakdown({
-          contributorDiversity: { score: 8, max: 25, label: 'Contributor Diversity', description: 'Few contributors' },
+          ecosystemDiversity: { score: 8, max: 25, label: 'Ecosystem Diversity', description: 'Few contributors' },
         })}
       />
     );
-    expect(screen.getByText(/limited contributor/i)).toBeInTheDocument();
+    expect(screen.getByText(/limited ecosystem/i)).toBeInTheDocument();
   });
 
-  it('shows a critical warning for very low contributor diversity', () => {
+  it('shows a critical warning for very low ecosystem diversity', () => {
     render(
       <Recommendations
         breakdown={makeBreakdown({
-          contributorDiversity: { score: 2, max: 25, label: 'Contributor Diversity', description: 'Single contributor' },
+          ecosystemDiversity: { score: 2, max: 25, label: 'Ecosystem Diversity', description: 'Single contributor' },
         })}
       />
     );
     expect(screen.getByText(/bus factor/i)).toBeInTheDocument();
   });
 
-  it('shows a critical recommendation when freshness is very low', () => {
+  it('shows a critical recommendation when evolutionary freshness is very low', () => {
     render(
       <Recommendations
         breakdown={makeBreakdown({
-          freshness: { score: 3, max: 25, label: 'Freshness', description: 'Very stale' },
+          evolutionaryFreshness: { score: 3, max: 25, label: 'Evolutionary Freshness', description: 'Very stale' },
         })}
       />
     );
-    expect(screen.getByText(/freshness/i)).toBeInTheDocument();
+    expect(screen.getByText(/Evolutionary Freshness/i)).toBeInTheDocument();
     expect(screen.getByText(/stale/i)).toBeInTheDocument();
   });
 
@@ -86,13 +86,13 @@ describe('Recommendations', () => {
     render(
       <Recommendations
         breakdown={makeBreakdown({
-          commitActivity: { score: 2, max: 25, label: 'Commit Activity', description: 'Very low' },
-          freshness: { score: 3, max: 25, label: 'Freshness', description: 'Stale' },
+          forkActivity: { score: 2, max: 25, label: 'Fork Activity', description: 'Very low' },
+          evolutionaryFreshness: { score: 3, max: 25, label: 'Evolutionary Freshness', description: 'Stale' },
         })}
       />
     );
-    expect(screen.getByText(/commit activity/i)).toBeInTheDocument();
-    expect(screen.getByText(/freshness/i)).toBeInTheDocument();
+    expect(screen.getByText(/Fork Activity/i)).toBeInTheDocument();
+    expect(screen.getByText(/Evolutionary Freshness/i)).toBeInTheDocument();
   });
 
   it('renders with accessible structure', () => {
@@ -104,7 +104,7 @@ describe('Recommendations', () => {
     const { container } = render(
       <Recommendations
         breakdown={makeBreakdown({
-          commitActivity: { score: 0, max: 25, label: 'Commit Activity', description: 'None' },
+          forkActivity: { score: 0, max: 25, label: 'Fork Activity', description: 'None' },
         })}
       />
     );
@@ -116,10 +116,10 @@ describe('Recommendations', () => {
     render(
       <Recommendations
         breakdown={makeBreakdown({
-          issueHealth: { score: 12, max: 25, label: 'Issue Health', description: 'Fair' },
+          communityVitality: { score: 12, max: 25, label: 'Community Vitality', description: 'Fair' },
         })}
       />
     );
-    expect(screen.getByText(/issue health/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Community Vitality/i).length).toBeGreaterThan(0);
   });
 });

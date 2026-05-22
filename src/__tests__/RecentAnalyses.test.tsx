@@ -12,10 +12,10 @@ function makeAnalysis(overrides: Partial<RepoAnalysis> = {}): RepoAnalysis {
       total: 75,
       grade: 'A',
       breakdown: {
-        commitActivity: { score: 20, max: 25, label: 'Commit Activity', description: 'Good' },
-        issueHealth: { score: 18, max: 25, label: 'Issue Health', description: 'Good' },
-        contributorDiversity: { score: 20, max: 25, label: 'Contributor Diversity', description: 'Good' },
-        freshness: { score: 17, max: 25, label: 'Freshness', description: 'Good' },
+        forkActivity: { score: 20, max: 25, label: 'Fork Activity', description: 'Good' },
+        communityVitality: { score: 18, max: 25, label: 'Community Vitality', description: 'Good' },
+        ecosystemDiversity: { score: 20, max: 25, label: 'Ecosystem Diversity', description: 'Good' },
+        evolutionaryFreshness: { score: 17, max: 25, label: 'Evolutionary Freshness', description: 'Good' },
       },
     },
     repoData: {

@@ -4,8 +4,8 @@ import { MetricCard } from '../components/MetricCard';
 
 describe('MetricCard', () => {
   it('renders the label and score', () => {
-    render(<MetricCard label="Commit Activity" score={20} max={25} description="Good activity" icon="🔥" />);
-    expect(screen.getByText('Commit Activity')).toBeInTheDocument();
+    render(<MetricCard label="Fork Activity" score={20} max={25} description="Good activity" icon="🔥" />);
+    expect(screen.getByText('Fork Activity')).toBeInTheDocument();
     expect(screen.getByText('20/25')).toBeInTheDocument();
   });
 
@@ -20,8 +20,8 @@ describe('MetricCard', () => {
   });
 
   it('renders a progress bar with correct ARIA attributes', () => {
-    render(<MetricCard label="Freshness" score={18} max={25} description="Active" icon="🕐" />);
-    const progressbar = screen.getByRole('progressbar', { name: 'Freshness: 18 of 25' });
+    render(<MetricCard label="Evolutionary Freshness" score={18} max={25} description="Active" icon="🕐" />);
+    const progressbar = screen.getByRole('progressbar', { name: 'Evolutionary Freshness: 18 of 25' });
     expect(progressbar).toBeInTheDocument();
     expect(progressbar).toHaveAttribute('aria-valuenow', '18');
     expect(progressbar).toHaveAttribute('aria-valuemin', '0');

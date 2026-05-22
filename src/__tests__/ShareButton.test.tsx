@@ -11,10 +11,10 @@ const mockAnalysis: RepoAnalysis = {
     total: 78,
     grade: 'A',
     breakdown: {
-      commitActivity: { score: 20, max: 25, label: 'Commit Activity', description: 'Good — 47 commits' },
-      issueHealth: { score: 22, max: 25, label: 'Issue Health', description: 'Healthy — 85% close rate' },
-      contributorDiversity: { score: 18, max: 25, label: 'Contributor Diversity', description: 'Moderate — 8 contributors' },
-      freshness: { score: 18, max: 25, label: 'Freshness', description: 'Updated 5 days ago' },
+      forkActivity: { score: 20, max: 25, label: 'Fork Activity', description: 'Good — 47 commits' },
+      communityVitality: { score: 22, max: 25, label: 'Community Vitality', description: 'Healthy — 85% close rate' },
+      ecosystemDiversity: { score: 18, max: 25, label: 'Ecosystem Diversity', description: 'Moderate — 8 contributors' },
+      evolutionaryFreshness: { score: 18, max: 25, label: 'Evolutionary Freshness', description: 'Updated 5 days ago' },
     },
   },
   repoData: {

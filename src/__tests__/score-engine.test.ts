@@ -112,10 +112,10 @@ describe('computeReliabilityScore', () => {
       latestRelease: { tag_name: 'v1.0', published_at: new Date().toISOString() },
     });
 
-    expect(breakdown.commitActivity).toBeDefined();
-    expect(breakdown.issueHealth).toBeDefined();
-    expect(breakdown.contributorDiversity).toBeDefined();
-    expect(breakdown.freshness).toBeDefined();
+    expect(breakdown.forkActivity).toBeDefined();
+    expect(breakdown.communityVitality).toBeDefined();
+    expect(breakdown.ecosystemDiversity).toBeDefined();
+    expect(breakdown.evolutionaryFreshness).toBeDefined();
 
     for (const metric of Object.values(breakdown)) {
       expect(metric.score).toBeGreaterThanOrEqual(0);
@@ -135,7 +135,7 @@ describe('computeReliabilityScore', () => {
       latestRelease: null,
     });
 
-    expect(breakdown.contributorDiversity.score).toBe(0);
+    expect(breakdown.ecosystemDiversity.score).toBe(0);
   });
 
   it('handles no issues gracefully', () => {
@@ -148,8 +148,8 @@ describe('computeReliabilityScore', () => {
       latestRelease: null,
     });
 
-    expect(breakdown.issueHealth.score).toBeGreaterThan(0);
-    expect(breakdown.issueHealth.description).toContain('No issues');
+    expect(breakdown.communityVitality.score).toBeGreaterThan(0);
+    expect(breakdown.communityVitality.description).toContain('No issues');
   });
 
   it('penalizes single-contributor repos', () => {
@@ -162,8 +162,8 @@ describe('computeReliabilityScore', () => {
       latestRelease: null,
     });
 
-    expect(breakdown.contributorDiversity.description.toLowerCase()).toContain('single');
-    expect(breakdown.contributorDiversity.score).toBeLessThan(10);
+    expect(breakdown.ecosystemDiversity.description.toLowerCase()).toContain('single');
+    expect(breakdown.ecosystemDiversity.score).toBeLessThan(10);
   });
 
   it('penalizes very stale repos', () => {
@@ -178,8 +178,8 @@ describe('computeReliabilityScore', () => {
       latestRelease: null,
     });
 
-    expect(breakdown.freshness.description.toLowerCase()).toContain('stale');
-    expect(breakdown.freshness.score).toBeLessThan(5);
+    expect(breakdown.evolutionaryFreshness.description.toLowerCase()).toContain('stale');
+    expect(breakdown.evolutionaryFreshness.score).toBeLessThan(5);
   });
 
   it('assigns A+ grade for total >= 90', () => {

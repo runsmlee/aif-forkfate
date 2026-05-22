@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import type { RepoAnalysis, AnalysisStatus, ReliabilityScore } from '../lib/types';
 import { useLocalStorage } from './useLocalStorage';
 
-const STORAGE_KEY = 'commitcasualty_history';
+const STORAGE_KEY = 'forkfate_history';
 const MAX_HISTORY = 20;
 
 export function useRepoAnalysis() {

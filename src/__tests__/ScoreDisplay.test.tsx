@@ -8,28 +8,28 @@ const mockScore: ReliabilityScore = {
   total: 78,
   grade: 'A',
   breakdown: {
-    commitActivity: {
+    forkActivity: {
       score: 20,
       max: 25,
-      label: 'Commit Activity',
+      label: 'Fork Activity',
       description: 'Good — 47 commits in 90 days',
     },
-    issueHealth: {
+    communityVitality: {
       score: 22,
       max: 25,
-      label: 'Issue Health',
+      label: 'Community Vitality',
       description: 'Good — 82% issue close rate',
     },
-    contributorDiversity: {
+    ecosystemDiversity: {
       score: 18,
       max: 25,
-      label: 'Contributor Diversity',
+      label: 'Ecosystem Diversity',
       description: 'Moderate — 8 contributors',
     },
-    freshness: {
+    evolutionaryFreshness: {
       score: 18,
       max: 25,
-      label: 'Freshness',
+      label: 'Evolutionary Freshness',
       description: 'Updated 5 days ago',
     },
   },
@@ -85,10 +85,10 @@ describe('ScoreDisplay', () => {
 
   it('renders all four metric breakdowns', () => {
     render(<ScoreDisplay analysis={mockAnalysis} onReset={() => {}} />);
-    expect(screen.getByRole('heading', { name: 'Commit Activity' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Issue Health' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Contributor Diversity' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Freshness' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Fork Activity' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Community Vitality' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Ecosystem Diversity' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Evolutionary Freshness' })).toBeInTheDocument();
   });
 
   it('renders metric descriptions', () => {

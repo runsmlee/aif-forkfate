@@ -52,7 +52,7 @@ export function ScoreDisplay({ analysis, onReset }: ScoreDisplayProps): JSX.Elem
   const animatedTotal = useAnimatedCounter(score.total, 1000);
 
   return (
-    <section className="py-12 px-4 sm:px-6 animate-fade-up" aria-label="Reliability analysis results">
+    <section className="py-12 px-4 sm:px-6 animate-fade-up" aria-label="Fork Survival analysis results">
       <div className="max-w-2xl mx-auto">
         {/* Score header */}
         <div className="text-center mb-10">
@@ -80,7 +80,7 @@ export function ScoreDisplay({ analysis, onReset }: ScoreDisplayProps): JSX.Elem
             <div className="flex flex-col items-start">
               <span
                 className={`text-5xl sm:text-6xl font-extrabold ${gradeColors[score.grade] ?? 'text-gray-700 dark:text-gray-300'}`}
-                aria-label={`Reliability grade: ${score.grade}`}
+                aria-label={`Fork Survival grade: ${score.grade}`}
               >
                 {score.grade}
               </span>

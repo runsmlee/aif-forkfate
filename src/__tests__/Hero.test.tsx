@@ -6,7 +6,7 @@ import { Hero } from '../components/Hero';
 describe('Hero', () => {
   it('renders the main heading', () => {
     render(<Hero onAnalyze={vi.fn()} status="idle" />);
-    expect(screen.getByRole('heading', { name: /instantly quantify/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /90% of forks are dead/i })).toBeInTheDocument();
   });
 
   it('renders the search input with accessible label', () => {
@@ -73,10 +73,9 @@ describe('Hero', () => {
     expect(screen.getByText('vercel/next.js')).toBeDisabled();
   });
 
-  it('renders the subtitle description', () => {
+  it('renders the subtitle description about fork survival', () => {
     render(<Hero onAnalyze={vi.fn()} status="idle" />);
-    expect(screen.getByText(/commit activity/i)).toBeInTheDocument();
-    expect(screen.getByText(/issue health/i)).toBeInTheDocument();
+    expect(screen.getByText(/fork survival score/i)).toBeInTheDocument();
   });
 
   it('has an accessible search landmark', () => {
