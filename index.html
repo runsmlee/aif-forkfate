@@ -17,9 +17,17 @@
       .app-skeleton{max-width:42rem;margin:0 auto;padding:4rem 1rem;text-align:center;font-family:system-ui,-apple-system,sans-serif}
       .app-skeleton h1{font-size:1.875rem;font-weight:700;color:#111827;margin-bottom:.5rem}
       .app-skeleton p{color:#6b7280;font-size:1rem;margin-bottom:2rem}
-      .app-skeleton-bar{height:3rem;background:#f3f4f6;border-radius:.5rem;margin-bottom:1rem;max-width:36rem;margin-left:auto;margin-right:auto}
-      .app-skeleton-pills{display:flex;gap:.5rem;justify-content:center;margin-top:1rem}
-      .app-skeleton-pill{width:5rem;height:1.5rem;background:#f3f4f6;border-radius:9999px}
+      .skeleton-form{display:flex;gap:.5rem;max-width:36rem;margin:0 auto 1rem}
+      .skeleton-input{flex:1;padding:.75rem 1rem .75rem 2.5rem;border-radius:.5rem;border:1px solid #d1d5db;background:#f9fafb;font-size:1rem;color:#111827;outline:none;font-family:inherit}
+      .skeleton-input:focus{border-color:transparent;box-shadow:0 0 0 2px #EF4444}
+      .skeleton-input::placeholder{color:#9ca3af}
+      .skeleton-btn{padding:.75rem 1.5rem;border-radius:.5rem;background:#b91c1c;color:#fff;font-weight:600;border:none;font-size:.875rem;cursor:pointer;font-family:inherit;white-space:nowrap}
+      .skeleton-btn:hover{background:#991b1b}
+      .skeleton-input-wrap{position:relative;flex:1}
+      .skeleton-input-icon{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);color:#9ca3af;pointer-events:none;font-size:1.125rem}
+      .skeleton-hint{display:flex;gap:.5rem;justify-content:center;margin-top:1rem;flex-wrap:wrap}
+      .skeleton-hint-pill{font-size:.75rem;padding:.25rem .75rem;border-radius:9999px;background:#f3f4f6;color:#6b7280;cursor:pointer;border:none;font-family:inherit;text-decoration:none}
+      .skeleton-hint-pill:hover{background:#fef2f2;color:#b91c1c}
     </style>
   </head>
   <body class="bg-white text-gray-900">
@@ -32,14 +40,44 @@
       <div class="app-skeleton">
         <h1>90% of forks are dead. See which ones lived.</h1>
         <p>Enter a GitHub repo to see its Fork Survival Score — which forks are alive, dead, or evolving.</p>
-        <div class="app-skeleton-bar"></div>
-        <div class="app-skeleton-pills">
-          <div class="app-skeleton-pill"></div>
-          <div class="app-skeleton-pill"></div>
-          <div class="app-skeleton-pill"></div>
+        <form class="skeleton-form" id="skeleton-form">
+          <div class="skeleton-input-wrap">
+            <span class="skeleton-input-icon" aria-hidden="true">&#128269;</span>
+            <input
+              type="text"
+              name="repo"
+              class="skeleton-input"
+              placeholder="e.g. facebook/react"
+              autocomplete="off"
+              spellcheck="false"
+              aria-label="GitHub repository (owner/repo)"
+            />
+          </div>
+          <button type="submit" class="skeleton-btn">Analyze</button>
+        </form>
+        <div class="skeleton-hint">
+          <span style="font-size:.75rem;color:#9ca3af;padding:.25rem 0">Try:</span>
+          <button class="skeleton-hint-pill" onclick="document.querySelector('.skeleton-input').value='facebook/react';document.getElementById('skeleton-form').dispatchEvent(new Event('submit'))">facebook/react</button>
+          <button class="skeleton-hint-pill" onclick="document.querySelector('.skeleton-input').value='vercel/next.js';document.getElementById('skeleton-form').dispatchEvent(new Event('submit'))">vercel/next.js</button>
+          <button class="skeleton-hint-pill" onclick="document.querySelector('.skeleton-input').value='denoland/deno';document.getElementById('skeleton-form').dispatchEvent(new Event('submit'))">denoland/deno</button>
         </div>
       </div>
     </div>
+    <script>
+      // Pre-hydration form handler: sets URL hash so React auto-analyzes on mount
+      document.getElementById('skeleton-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var input = this.querySelector('input');
+        var val = (input.value || '').trim().replace(/^https?:\/\/github\.com\//, '').replace(/\/$/, '');
+        if (val && val.indexOf('/') > 0) {
+          window.location.hash = val;
+        } else {
+          input.style.borderColor = '#EF4444';
+          input.setAttribute('placeholder', 'Use format: owner/repo');
+          setTimeout(function() { input.style.borderColor = ''; input.setAttribute('placeholder', 'e.g. facebook/react'); }, 2000);
+        }
+      });
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
