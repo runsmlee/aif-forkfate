@@ -65,6 +65,11 @@ export default function App(): JSX.Element {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
 
+  // Track page_view on mount
+  useEffect(() => {
+    window.aif?.track('page_view', { path: window.location.pathname });
+  }, []);
+
   // Update document title when viewing analysis
   useEffect(() => {
     if (currentAnalysis) {

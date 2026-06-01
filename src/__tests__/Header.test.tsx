@@ -17,7 +17,7 @@ describe('Header', () => {
 
   it('renders a dark mode toggle button', () => {
     render(<Header />);
-    const toggle = screen.getByRole('button', { name: /toggle dark mode/i });
+    const toggle = screen.getByRole('button', { name: /switch to dark mode/i });
     expect(toggle).toBeInTheDocument();
   });
 
@@ -25,7 +25,7 @@ describe('Header', () => {
     const user = userEvent.setup();
     render(<Header />);
 
-    const toggle = screen.getByRole('button', { name: /toggle dark mode/i });
+    const toggle = screen.getByRole('button', { name: /switch to dark mode/i });
     expect(document.documentElement.classList.contains('dark')).toBe(false);
 
     await user.click(toggle);
