@@ -5,81 +5,102 @@ import { Hero } from '../components/Hero';
 
 describe('Hero', () => {
   it('renders the main heading', () => {
-    render(<Hero onAnalyze={vi.fn()} status="idle" />);
-    expect(screen.getByRole('heading', { name: /90% of forks are dead/i })).toBeInTheDocument();
+    render(<Hero />);
+    expect(screen.getByRole('heading', { name: /how reliable is that repo/i })).toBeInTheDocument();
   });
 
-  it('renders the search input with accessible label', () => {
-    render(<Hero onAnalyze={vi.fn()} status="idle" />);
-    expect(screen.getByLabelText(/github repository/i)).toBeInTheDocument();
+  it('renders all 5 signal input fields', () => {
+    render(<Hero />);
+    expect(screen.getByLabelText(/commits \(last 90 days\)/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/days since last commit/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/open issues/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/closed issues/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/contributors/i)).toBeInTheDocument();
   });
 
-  it('renders the analyze button', () => {
-    render(<Hero onAnalyze={vi.fn()} status="idle" />);
-    expect(screen.getByRole('button', { name: /analyze/i })).toBeInTheDocument();
+  it('renders input fields with correct types and placeholders', () => {
+    render(<Hero />);
+    const commitsInput = screen.getByLabelText(/commits \(last 90 days\)/i) as HTMLInputElement;
+    expect(commitsInput.type).toBe('number');
+    expect(commitsInput.placeholder).toBe('e.g. 45');
   });
 
-  it('renders all example repo buttons', () => {
-    render(<Hero onAnalyze={vi.fn()} status="idle" />);
-    expect(screen.getByText('facebook/react')).toBeInTheDocument();
-    expect(screen.getByText('vercel/next.js')).toBeInTheDocument();
-    expect(screen.getByText('denoland/deno')).toBeInTheDocument();
-    expect(screen.getByText('sveltejs/svelte')).toBeInTheDocument();
-    expect(screen.getByText('microsoft/typescript')).toBeInTheDocument();
+  it('renders the subtitle description about reliability scoring', () => {
+    render(<Hero />);
+    expect(screen.getByText(/enter five signals/i)).toBeInTheDocument();
   });
 
-  it('calls onAnalyze with the input value when form is submitted', async () => {
+  it('has an accessible calculator landmark', () => {
+    render(<Hero />);
+    expect(screen.getByRole('group', { name: /repository signal inputs/i })).toBeInTheDocument();
+  });
+
+  it('shows empty state placeholder when no inputs are filled', () => {
+    render(<Hero />);
+    expect(screen.getByText(/enter at least one signal/i)).toBeInTheDocument();
+  });
+
+  it('computes and displays score when a signal is entered', async () => {
     const user = userEvent.setup();
-    const onAnalyze = vi.fn();
-    render(<Hero onAnalyze={onAnalyze} status="idle" />);
+    render(<Hero />);
 
-    const input = screen.getByLabelText(/github repository/i);
-    await user.type(input, 'owner/repo');
-    await user.click(screen.getByRole('button', { name: /analyze/i }));
+    const commitsInput = screen.getByLabelText(/commits \(last 90 days\)/i);
+    await user.type(commitsInput, '45');
 
-    expect(onAnalyze).toHaveBeenCalledWith('owner/repo');
+    // Score display should appear (grade label)
+    expect(screen.getByLabelText(/reliability grade:/i)).toBeInTheDocument();
   });
 
-  it('does not call onAnalyze with empty input', async () => {
+  it('shows metric breakdown cards when score is computed', async () => {
     const user = userEvent.setup();
-    const onAnalyze = vi.fn();
-    render(<Hero onAnalyze={onAnalyze} status="idle" />);
+    render(<Hero />);
 
-    const btn = screen.getByRole('button', { name: /analyze/i });
-    await user.click(btn);
+    const commitsInput = screen.getByLabelText(/commits \(last 90 days\)/i);
+    await user.type(commitsInput, '45');
 
-    expect(onAnalyze).not.toHaveBeenCalled();
+    expect(screen.getByRole('heading', { name: /fork activity/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /community vitality/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /ecosystem diversity/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /evolutionary freshness/i })).toBeInTheDocument();
   });
 
-  it('calls onAnalyze when clicking an example repo', async () => {
+  it('calls onScoreComputed when signal values change', async () => {
+    const onScoreComputed = vi.fn();
     const user = userEvent.setup();
-    const onAnalyze = vi.fn();
-    render(<Hero onAnalyze={onAnalyze} status="idle" />);
+    render(<Hero onScoreComputed={onScoreComputed} />);
 
-    await user.click(screen.getByText('vercel/next.js'));
-    expect(onAnalyze).toHaveBeenCalledWith('vercel/next.js');
+    const commitsInput = screen.getByLabelText(/commits \(last 90 days\)/i);
+    await user.type(commitsInput, '45');
+
+    // onScoreComputed should be called for each digit typed (4, 45)
+    expect(onScoreComputed).toHaveBeenCalled();
+    const lastCall = onScoreComputed.mock.calls[onScoreComputed.mock.calls.length - 1];
+    expect(lastCall[1].commitsLast90Days).toBe(45);
+    expect(lastCall[0].total).toBeGreaterThan(0);
   });
 
-  it('shows loading state on the button when status is loading', () => {
-    render(<Hero onAnalyze={vi.fn()} status="loading" />);
-    const btn = screen.getByRole('button', { name: /analyze/i });
-    expect(btn).toBeDisabled();
-    expect(btn).toHaveTextContent('Analyzing');
+  it('has a reset button that clears all inputs', async () => {
+    const user = userEvent.setup();
+    render(<Hero />);
+
+    const commitsInput = screen.getByLabelText(/commits \(last 90 days\)/i) as HTMLInputElement;
+    await user.type(commitsInput, '45');
+    expect(commitsInput.value).toBe('45');
+
+    // Reset button should appear after entering data
+    const resetBtn = screen.getByRole('button', { name: /clear all inputs/i });
+    await user.click(resetBtn);
+
+    // After reset, the empty state should show again
+    expect(screen.getByText(/enter at least one signal/i)).toBeInTheDocument();
   });
 
-  it('disables example repo buttons when loading', () => {
-    render(<Hero onAnalyze={vi.fn()} status="loading" />);
-    expect(screen.getByText('facebook/react')).toBeDisabled();
-    expect(screen.getByText('vercel/next.js')).toBeDisabled();
-  });
-
-  it('renders the subtitle description about fork survival', () => {
-    render(<Hero onAnalyze={vi.fn()} status="idle" />);
-    expect(screen.getByText(/fork survival score/i)).toBeInTheDocument();
-  });
-
-  it('has an accessible search landmark', () => {
-    render(<Hero onAnalyze={vi.fn()} status="idle" />);
-    expect(screen.getByRole('search', { name: /search for a repository/i })).toBeInTheDocument();
+  it('renders hint text for each signal input', () => {
+    render(<Hero />);
+    expect(screen.getByText(/count non-merge commits/i)).toBeInTheDocument();
+    expect(screen.getByText(/days since the most recent push/i)).toBeInTheDocument();
+    expect(screen.getByText(/current number of open issues/i)).toBeInTheDocument();
+    expect(screen.getByText(/total number of closed issues/i)).toBeInTheDocument();
+    expect(screen.getByText(/number of users who have committed/i)).toBeInTheDocument();
   });
 });

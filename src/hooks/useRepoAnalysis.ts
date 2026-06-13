@@ -1,117 +1,47 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
-import type { RepoAnalysis, AnalysisStatus, ReliabilityScore } from '../lib/types';
+import { useCallback, useRef } from 'react';
+import type { ManualSignals, ReliabilityScore, ManualAnalysis } from '../lib/types';
 import { useLocalStorage } from './useLocalStorage';
 
-const STORAGE_KEY = 'forkfate_history';
+const STORAGE_KEY = 'commitcasualty_history';
 const MAX_HISTORY = 20;
 
-export function useRepoAnalysis() {
-  const [history, setHistory] = useLocalStorage<RepoAnalysis[]>(STORAGE_KEY, []);
-  const [status, setStatus] = useState<AnalysisStatus>('idle');
-  const [currentAnalysis, setCurrentAnalysis] = useState<RepoAnalysis | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const initialHashAnalyzed = useRef(false);
+export function useManualAnalysis() {
+  const [history, setHistory] = useLocalStorage<ManualAnalysis[]>(STORAGE_KEY, []);
+  const lastSavedSignals = useRef<string>('');
 
-  const analyze = useCallback(
-    async (repoInput: string) => {
-      const repo = repoInput.trim().replace(/^https?:\/\/github\.com\//, '').replace(/\/$/, '');
-      if (!repo || !repo.includes('/')) {
-        setError('Please enter a valid GitHub repository (e.g., facebook/react)');
-        return null;
-      }
+  const saveToHistory = useCallback(
+    (score: ReliabilityScore, signals: ManualSignals) => {
+      // Dedup: don't save identical signal sets repeatedly
+      const signalKey = JSON.stringify(signals);
+      if (signalKey === lastSavedSignals.current) return;
+      lastSavedSignals.current = signalKey;
 
-      setStatus('loading');
-      setError(null);
+      const entry: ManualAnalysis = {
+        id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        signals,
+        timestamp: new Date().toISOString(),
+        score,
+        label: `Score ${score.total}/100 (${score.grade})`,
+      };
 
-      try {
-        const [{ analyzeRepo }, { computeReliabilityScore }] = await Promise.all([
-          import('../lib/github-api'),
-          import('../lib/score-engine'),
-        ]);
-        const data = await analyzeRepo(repo);
-        const score: ReliabilityScore = computeReliabilityScore({
-          repoData: data.repoData,
-          commitCount: data.commitCount,
-          contributors: data.contributors,
-          openIssues: data.openIssues,
-          closedIssues: data.closedIssues,
-          latestRelease: data.latestRelease,
-        });
-
-        const analysis: RepoAnalysis = {
-          repo,
-          timestamp: new Date().toISOString(),
-          score,
-          repoData: data.repoData,
-          commitCount: data.commitCount,
-          contributorCount: data.contributors.length,
-          openIssueCount: data.openIssues.length,
-          closedIssueCount: data.closedIssues.length,
-          lastCommitDate: data.repoData.pushed_at,
-          lastReleaseDate: data.latestRelease?.published_at ?? null,
-        };
-
-        setCurrentAnalysis(analysis);
-        setStatus('success');
-
-        // Update URL hash for shareable links
-        window.location.hash = repo;
-
-        // Persist to localStorage (dedup by repo name) and track score delta
-        setHistory((prev) => {
-          const previous = prev.find((a) => a.repo === repo);
-          if (previous) {
-            analysis.previousScore = previous.score.total;
-          }
-          const filtered = prev.filter((a) => a.repo !== repo);
-          return [analysis, ...filtered].slice(0, MAX_HISTORY);
-        });
-
-        return analysis;
-      } catch (err) {
-        const message = err instanceof Error ? err.message : 'An unexpected error occurred';
-        setError(message);
-        setStatus('error');
-        return null;
-      }
+      setHistory((prev) => [entry, ...prev].slice(0, MAX_HISTORY));
+      window.aif?.track('score_computed', {
+        total: score.total,
+        grade: score.grade,
+        signals,
+      });
     },
     [setHistory]
   );
 
-  const reset = useCallback(() => {
-    setCurrentAnalysis(null);
-    setStatus('idle');
-    setError(null);
-    window.location.hash = '';
-  }, []);
-
   const clearHistory = useCallback(() => {
     setHistory([]);
+    lastSavedSignals.current = '';
   }, [setHistory]);
-
-  const dismissError = useCallback(() => {
-    setError(null);
-    setStatus('idle');
-  }, []);
-
-  // Auto-analyze from URL hash on mount
-  useEffect(() => {
-    if (initialHashAnalyzed.current) return;
-    const hash = window.location.hash.slice(1);
-    if (hash && hash.includes('/')) {
-      initialHashAnalyzed.current = true;
-      analyze(hash);
-    }
-  }, [analyze]);
 
   return {
     history,
-    currentAnalysis,
-    status,
-    error,
-    analyze,
-    reset,
+    saveToHistory,
     clearHistory,
-    dismissError,
   };
 }

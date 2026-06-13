@@ -2,11 +2,18 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { RecentAnalyses } from '../components/RecentAnalyses';
-import type { RepoAnalysis } from '../lib/types';
+import type { ManualAnalysis } from '../lib/types';
 
-function makeAnalysis(overrides: Partial<RepoAnalysis> = {}): RepoAnalysis {
+function makeAnalysis(overrides: Partial<ManualAnalysis> = {}): ManualAnalysis {
   return {
-    repo: 'owner/repo',
+    id: 'test-id-1',
+    signals: {
+      commitsLast90Days: 50,
+      daysSinceLastCommit: 3,
+      openIssues: 5,
+      closedIssues: 20,
+      contributors: 10,
+    },
     timestamp: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
     score: {
       total: 75,
@@ -18,28 +25,7 @@ function makeAnalysis(overrides: Partial<RepoAnalysis> = {}): RepoAnalysis {
         evolutionaryFreshness: { score: 17, max: 25, label: 'Evolutionary Freshness', description: 'Good' },
       },
     },
-    repoData: {
-      id: 1,
-      name: 'repo',
-      full_name: 'owner/repo',
-      description: 'Test repo',
-      html_url: 'https://github.com/owner/repo',
-      stargazers_count: 100,
-      forks_count: 10,
-      open_issues_count: 5,
-      language: 'TypeScript',
-      created_at: '2023-01-01T00:00:00Z',
-      updated_at: '2026-04-01T00:00:00Z',
-      pushed_at: new Date().toISOString(),
-      topics: [],
-      license: null,
-    },
-    commitCount: 50,
-    contributorCount: 10,
-    openIssueCount: 5,
-    closedIssueCount: 20,
-    lastCommitDate: new Date().toISOString(),
-    lastReleaseDate: null,
+    label: 'Score 75/100 (A)',
     ...overrides,
   };
 }
@@ -56,18 +42,19 @@ describe('RecentAnalyses', () => {
     render(
       <RecentAnalyses history={[makeAnalysis()]} onSelect={vi.fn()} onClear={vi.fn()} />
     );
-    expect(screen.getByText('Recent Analyses')).toBeInTheDocument();
+    expect(screen.getByText('Recent Scores')).toBeInTheDocument();
   });
 
-  it('renders repo names from history', () => {
+  it('renders signal summary from history entries', () => {
     render(
       <RecentAnalyses
-        history={[makeAnalysis({ repo: 'facebook/react' })]}
+        history={[makeAnalysis({ signals: { commitsLast90Days: 45, daysSinceLastCommit: 3, openIssues: 12, closedIssues: 50, contributors: 8 } })]}
         onSelect={vi.fn()}
         onClear={vi.fn()}
       />
     );
-    expect(screen.getByText('facebook/react')).toBeInTheDocument();
+    expect(screen.getByText(/45 commits/i)).toBeInTheDocument();
+    expect(screen.getByText(/8 contributors/i)).toBeInTheDocument();
   });
 
   it('renders score and grade for each entry', () => {
@@ -96,19 +83,22 @@ describe('RecentAnalyses', () => {
     expect(onClear).toHaveBeenCalledTimes(1);
   });
 
-  it('calls onSelect with repo name when entry is clicked', async () => {
+  it('calls onSelect with entry when clicked', async () => {
     const user = userEvent.setup();
     const onSelect = vi.fn();
+    const entry = makeAnalysis();
     render(
       <RecentAnalyses
-        history={[makeAnalysis({ repo: 'vercel/next.js' })]}
+        history={[entry]}
         onSelect={onSelect}
         onClear={vi.fn()}
       />
     );
 
-    await user.click(screen.getByText('vercel/next.js'));
-    expect(onSelect).toHaveBeenCalledWith('vercel/next.js');
+    // Click on the entry button (it contains the signal summary text)
+    const btn = screen.getByRole('button', { name: /commits/i });
+    await user.click(btn);
+    expect(onSelect).toHaveBeenCalledWith(entry);
   });
 
   it('displays time ago for recent entries', () => {
@@ -126,51 +116,15 @@ describe('RecentAnalyses', () => {
     render(
       <RecentAnalyses
         history={[
-          makeAnalysis({ repo: 'facebook/react', score: { ...makeAnalysis().score, total: 85, grade: 'A+' } }),
-          makeAnalysis({ repo: 'denoland/deno', score: { ...makeAnalysis().score, total: 60, grade: 'B' } }),
+          makeAnalysis({ id: '1', score: { ...makeAnalysis().score, total: 85, grade: 'A+' }, signals: { commitsLast90Days: 100, daysSinceLastCommit: 1, openIssues: 5, closedIssues: 50, contributors: 20 } }),
+          makeAnalysis({ id: '2', score: { ...makeAnalysis().score, total: 60, grade: 'B' }, signals: { commitsLast90Days: 30, daysSinceLastCommit: 10, openIssues: 20, closedIssues: 30, contributors: 5 } }),
         ]}
         onSelect={vi.fn()}
         onClear={vi.fn()}
       />
     );
-    expect(screen.getByText('facebook/react')).toBeInTheDocument();
-    expect(screen.getByText('denoland/deno')).toBeInTheDocument();
     expect(screen.getByText('85')).toBeInTheDocument();
     expect(screen.getByText('60')).toBeInTheDocument();
-  });
-
-  it('renders score delta when previous score is available', () => {
-    render(
-      <RecentAnalyses
-        history={[
-          makeAnalysis({
-            repo: 'facebook/react',
-            previousScore: 70,
-            score: { ...makeAnalysis().score, total: 85, grade: 'A+' },
-          }),
-        ]}
-        onSelect={vi.fn()}
-        onClear={vi.fn()}
-      />
-    );
-    expect(screen.getByText('+15')).toBeInTheDocument();
-  });
-
-  it('renders negative score delta for score decrease', () => {
-    render(
-      <RecentAnalyses
-        history={[
-          makeAnalysis({
-            repo: 'facebook/react',
-            previousScore: 90,
-            score: { ...makeAnalysis().score, total: 78, grade: 'A' },
-          }),
-        ]}
-        onSelect={vi.fn()}
-        onClear={vi.fn()}
-      />
-    );
-    expect(screen.getByText('-12')).toBeInTheDocument();
   });
 
   it('has correct ARIA landmark', () => {

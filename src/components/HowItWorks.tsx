@@ -1,33 +1,37 @@
 import { memo } from 'react';
 
-const METRICS = [
+const SIGNALS = [
   {
     icon: '🔥',
     title: 'Fork Activity',
     description:
-      'Measures how actively the project is being developed by counting non-merge commits over the last 90 days. Active projects sustain healthier fork ecosystems.',
+      'Counts non-merge commits on the default branch over the last 90 days. Active projects sustain healthier ecosystems.',
     maxScore: 25,
+    howToFind: 'GitHub → repo → Commits → count commits in the last 3 months',
   },
   {
     icon: '🐛',
     title: 'Community Vitality',
     description:
-      'Evaluates whether the community is engaged by analyzing the ratio of closed to total issues. Active issue resolution signals a living fork ecosystem.',
+      'Measures issue close rate — the ratio of closed issues to total issues. Active issue resolution signals an engaged community.',
     maxScore: 25,
+    howToFind: 'GitHub → repo → Issues → note open vs. closed counts',
   },
   {
     icon: '👥',
     title: 'Ecosystem Diversity',
     description:
-      'Assesses the breadth of contributor support by counting contributors and checking whether development effort is distributed across the ecosystem.',
+      'Assesses contributor breadth and distribution. More contributors means lower bus factor risk.',
     maxScore: 25,
+    howToFind: 'GitHub → repo → Contributors → count the contributor list',
   },
   {
     icon: '🕐',
     title: 'Evolutionary Freshness',
     description:
-      'Checks how recently the project evolved and whether a recent release exists. Stale projects produce dead forks; fresh ones produce evolving forks.',
+      'Checks how recently the project was updated. Stale projects produce dead forks; fresh ones keep evolving.',
     maxScore: 25,
+    howToFind: 'GitHub → repo → check the "last commit" date, calculate days since',
   },
 ];
 
@@ -40,13 +44,12 @@ export const HowItWorks = memo(function HowItWorks(): JSX.Element {
             How It Works
           </h2>
           <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 max-w-lg mx-auto">
-            We analyze real GitHub API data to compute a Fork Survival Score out of 100.
-            All scoring is deterministic — transparent metrics that reveal which forks thrive.
+            Enter five signals from any GitHub repository. The score is computed instantly and deterministically — transparent metrics, no API calls, runs entirely in your browser.
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" role="list">
-          {METRICS.map((metric) => (
+          {SIGNALS.map((metric) => (
             <div
               key={metric.title}
               className="card p-5 hover:shadow-card-hover transition-shadow duration-200"
@@ -59,8 +62,11 @@ export const HowItWorks = memo(function HowItWorks(): JSX.Element {
                   Max {metric.maxScore}
                 </span>
               </div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+              <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mb-2">
                 {metric.description}
+              </p>
+              <p className="text-xs text-brand-600 dark:text-brand-400 font-medium">
+                How to find: {metric.howToFind}
               </p>
             </div>
           ))}

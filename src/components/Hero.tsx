@@ -1,113 +1,276 @@
-import { useState, forwardRef, useImperativeHandle, useRef, type FormEvent } from 'react';
-import { EXAMPLE_REPOS } from '../lib/types';
+import { useState, useMemo, useCallback, useEffect, useRef, type ChangeEvent } from 'react';
+import type { ManualSignals, ReliabilityScore } from '../lib/types';
+import { computeManualScore } from '../lib/score-engine';
+import { ScoreGauge } from './ScoreGauge';
+import { MetricCard } from './MetricCard';
+import { Recommendations } from './Recommendations';
+import { useAnimatedCounter } from '../hooks/useAnimatedCounter';
 
-export interface HeroHandle {
-  focusInput: () => void;
+interface SignalField {
+  key: keyof ManualSignals;
+  label: string;
+  hint: string;
+  min: number;
+  max: number;
+  placeholder: string;
 }
 
-interface HeroProps {
-  onAnalyze: (repo: string) => void;
-  status: 'idle' | 'loading' | 'success' | 'error';
+const SIGNAL_FIELDS: SignalField[] = [
+  {
+    key: 'commitsLast90Days',
+    label: 'Commits (last 90 days)',
+    hint: 'Count non-merge commits on the default branch in the last 90 days',
+    min: 0,
+    max: 10000,
+    placeholder: 'e.g. 45',
+  },
+  {
+    key: 'daysSinceLastCommit',
+    label: 'Days since last commit',
+    hint: 'Days since the most recent push to the default branch',
+    min: 0,
+    max: 3650,
+    placeholder: 'e.g. 3',
+  },
+  {
+    key: 'openIssues',
+    label: 'Open issues',
+    hint: 'Current number of open issues (exclude pull requests)',
+    min: 0,
+    max: 100000,
+    placeholder: 'e.g. 12',
+  },
+  {
+    key: 'closedIssues',
+    label: 'Closed issues',
+    hint: 'Total number of closed issues in the repository',
+    min: 0,
+    max: 100000,
+    placeholder: 'e.g. 50',
+  },
+  {
+    key: 'contributors',
+    label: 'Contributors',
+    hint: 'Number of users who have committed to the repository',
+    min: 0,
+    max: 10000,
+    placeholder: 'e.g. 8',
+  },
+];
+
+const METRIC_ICONS = ['🔥', '🐛', '👥', '🕐'];
+
+const EMPTY_SIGNALS: ManualSignals = {
+  commitsLast90Days: 0,
+  daysSinceLastCommit: 0,
+  openIssues: 0,
+  closedIssues: 0,
+  contributors: 0,
+};
+
+function hasAnySignal(signals: ManualSignals): boolean {
+  return (
+    signals.commitsLast90Days > 0 ||
+    signals.daysSinceLastCommit > 0 ||
+    signals.openIssues > 0 ||
+    signals.closedIssues > 0 ||
+    signals.contributors > 0
+  );
 }
 
-export const Hero = forwardRef<HeroHandle, HeroProps>(function Hero({ onAnalyze, status }, ref): JSX.Element {
-  const [input, setInput] = useState('');
-  const [shake, setShake] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+function parseSignalInput(value: string): number {
+  if (value === '') return 0;
+  const parsed = parseInt(value, 10);
+  return isNaN(parsed) || parsed < 0 ? 0 : parsed;
+}
 
-  useImperativeHandle(ref, () => ({
-    focusInput: () => {
-      inputRef.current?.focus();
-    },
-  }));
+export interface HeroProps {
+  onScoreComputed?: (score: ReliabilityScore, signals: ManualSignals) => void;
+  initialSignals?: ManualSignals;
+}
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    const value = input.trim();
-    if (value) {
-      onAnalyze(value);
-    } else {
-      setShake(true);
-      setTimeout(() => setShake(false), 600);
+export function Hero({ onScoreComputed, initialSignals }: HeroProps): JSX.Element {
+  const [signals, setSignals] = useState<ManualSignals>(initialSignals ?? EMPTY_SIGNALS);
+  const [inputValues, setInputValues] = useState<Record<keyof ManualSignals, string>>({
+    commitsLast90Days: initialSignals?.commitsLast90Days ? String(initialSignals.commitsLast90Days) : '',
+    daysSinceLastCommit: initialSignals?.daysSinceLastCommit ? String(initialSignals.daysSinceLastCommit) : '',
+    openIssues: initialSignals?.openIssues ? String(initialSignals.openIssues) : '',
+    closedIssues: initialSignals?.closedIssues ? String(initialSignals.closedIssues) : '',
+    contributors: initialSignals?.contributors ? String(initialSignals.contributors) : '',
+  });
+
+  const active = hasAnySignal(signals);
+
+  const score: ReliabilityScore | null = useMemo(() => {
+    if (!active) return null;
+    const result = computeManualScore(signals);
+    return result;
+  }, [signals, active]);
+
+  // Track previous signals to detect changes (avoid notifying on mount with empty signals)
+  const prevSignalsRef = useRef<ManualSignals>(signals);
+
+  // Notify parent when score changes — use useEffect to avoid setState-during-render
+  useEffect(() => {
+    if (!onScoreComputed) return;
+    if (signals === prevSignalsRef.current) return;
+    prevSignalsRef.current = signals;
+
+    if (hasAnySignal(signals)) {
+      const newScore = computeManualScore(signals);
+      onScoreComputed(newScore, signals);
     }
-  };
+  }, [signals, onScoreComputed]);
 
-  const handleExample = (repo: string) => {
-    setInput(repo);
-    onAnalyze(repo);
-  };
+  const handleSignalChange = useCallback(
+    (key: keyof ManualSignals, rawValue: string) => {
+      const numValue = parseSignalInput(rawValue);
+      setInputValues((prev) => ({ ...prev, [key]: rawValue }));
+      setSignals((prev) => ({ ...prev, [key]: numValue }));
+    },
+    []
+  );
+
+  const handleReset = useCallback(() => {
+    setSignals(EMPTY_SIGNALS);
+    setInputValues({
+      commitsLast90Days: '',
+      daysSinceLastCommit: '',
+      openIssues: '',
+      closedIssues: '',
+      contributors: '',
+    });
+  }, []);
 
   return (
-    <section className="py-16 sm:py-24 px-4 sm:px-6" role="search" aria-label="Search for a repository">
-      <div className="max-w-2xl mx-auto text-center">
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-gray-100 tracking-tight mb-4">
-          90% of forks are dead.
-          <span className="text-brand-500 block sm:inline sm:ml-2">See which ones lived.</span>
-        </h1>
-        <p className="text-base sm:text-lg text-gray-500 dark:text-gray-400 mb-10 max-w-lg mx-auto">
-          Enter a GitHub repo to see its Fork Survival Score — which forks are alive, dead, or evolving.
-        </p>
+    <section className="py-12 sm:py-16 px-4 sm:px-6" aria-label="Open-source reliability calculator">
+      <div className="max-w-2xl mx-auto">
+        {/* Heading */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-gray-100 tracking-tight mb-3">
+            How reliable is that repo?
+            <span className="text-brand-500 block sm:inline sm:ml-2">Score it in seconds.</span>
+          </h1>
+          <p className="text-base sm:text-lg text-gray-500 dark:text-gray-400 max-w-lg mx-auto">
+            Enter five signals from any GitHub repo to get an instant reliability score. Deterministic, runs in your browser.
+          </p>
+        </div>
 
-        <form onSubmit={handleSubmit} className="max-w-xl mx-auto mb-8">
-          <label htmlFor="repo-input" className="sr-only">
-            GitHub Repository (owner/repo)
-          </label>
-          <div className="flex gap-2">
-            <div className={`flex-1 relative ${shake ? 'animate-shake' : ''}`}>
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <svg className="h-5 w-5 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                </svg>
-              </div>
+        {/* Signal inputs */}
+        <div
+          className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8"
+          role="group"
+          aria-label="Repository signal inputs"
+        >
+          {SIGNAL_FIELDS.map((field) => (
+            <div
+              key={field.key}
+              className={field.key === 'contributors' ? 'sm:col-span-2 sm:max-w-xs' : ''}
+            >
+              <label
+                htmlFor={`signal-${field.key}`}
+                className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1"
+              >
+                {field.label}
+              </label>
               <input
-                ref={inputRef}
-                id="repo-input"
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="e.g. facebook/react"
-                aria-label="GitHub repository (owner/repo)"
-                className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-sm sm:text-base transition-shadow"
+                id={`signal-${field.key}`}
+                type="number"
+                inputMode="numeric"
+                min={field.min}
+                max={field.max}
+                value={inputValues[field.key]}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  handleSignalChange(field.key, e.target.value)
+                }
+                placeholder={field.placeholder}
+                aria-describedby={`hint-${field.key}`}
+                className="w-full px-3 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-sm tabular-nums transition-shadow"
                 autoComplete="off"
-                spellCheck={false}
-                disabled={status === 'loading'}
               />
+              <p id={`hint-${field.key}`} className="mt-1 text-xs text-gray-400 dark:text-gray-500">
+                {field.hint}
+              </p>
             </div>
-            <button
-              type="submit"
-              disabled={status === 'loading'}
-              className="btn-primary whitespace-nowrap min-w-[100px]"
-              aria-label="Analyze repository"
-            >
-              {status === 'loading' ? (
-                <span className="flex items-center gap-2">
-                  <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0-3.042 1.135-5.824 3-7.938l3-2.647z" />
-                  </svg>
-                  Analyzing…
-                </span>
-              ) : (
-                'Analyze'
-              )}
-            </button>
-          </div>
-        </form>
-
-        <div className="flex flex-wrap justify-center gap-2" aria-label="Example repositories">
-          <span className="text-xs text-gray-400 dark:text-gray-500 py-1">Try:</span>
-          {EXAMPLE_REPOS.map((repo) => (
-            <button
-              key={repo}
-              onClick={() => handleExample(repo)}
-              disabled={status === 'loading'}
-              className="text-xs px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-brand-50 dark:hover:bg-brand-900/20 hover:text-brand-700 dark:hover:text-brand-400 transition-colors disabled:opacity-50"
-            >
-              {repo}
-            </button>
           ))}
         </div>
+
+        {/* Live score display */}
+        {score && active ? (
+          <div className="animate-fade-up">
+            {/* Score gauge + grade */}
+            <div className="flex items-center justify-center gap-4 sm:gap-6 mb-8">
+              <ScoreGauge score={score.total} grade={score.grade} />
+              <div className="flex flex-col items-start">
+                <span
+                  className={`text-4xl sm:text-5xl font-extrabold ${
+                    score.grade === 'A+' || score.grade === 'A'
+                      ? 'text-emerald-600 dark:text-emerald-400'
+                      : score.grade === 'B'
+                        ? 'text-blue-600 dark:text-blue-400'
+                        : score.grade === 'C'
+                          ? 'text-yellow-600 dark:text-yellow-400'
+                          : score.grade === 'D'
+                            ? 'text-orange-600 dark:text-orange-400'
+                            : 'text-red-600 dark:text-red-400'
+                  }`}
+                  aria-label={`Reliability grade: ${score.grade}`}
+                >
+                  {score.grade}
+                </span>
+                <LiveScoreCounter total={score.total} />
+              </div>
+            </div>
+
+            {/* Metric breakdown */}
+            <div
+              className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6"
+              aria-label="Score breakdown by category"
+            >
+              {Object.values(score.breakdown).map((metric, i) => (
+                <MetricCard
+                  key={metric.label}
+                  label={metric.label}
+                  score={metric.score}
+                  max={metric.max}
+                  description={metric.description}
+                  icon={METRIC_ICONS[i] ?? '📊'}
+                />
+              ))}
+            </div>
+
+            {/* Recommendations */}
+            <Recommendations breakdown={score.breakdown} />
+
+            {/* Reset button */}
+            <div className="flex justify-center mt-6">
+              <button
+                onClick={handleReset}
+                className="btn-secondary text-sm"
+                aria-label="Clear all inputs and reset score"
+              >
+                Reset Calculator
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="text-center py-8 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-xl">
+            <p className="text-sm text-gray-400 dark:text-gray-500">
+              Enter at least one signal above to see the reliability score.
+            </p>
+          </div>
+        )}
       </div>
     </section>
   );
-});
+}
+
+/** Displays the animated total score counter */
+function LiveScoreCounter({ total }: { total: number }): JSX.Element {
+  const animatedTotal = useAnimatedCounter(total, 600);
+  return (
+    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 tabular-nums">
+      {animatedTotal}/100
+    </p>
+  );
+}

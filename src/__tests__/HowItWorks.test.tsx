@@ -19,13 +19,22 @@ describe('HowItWorks', () => {
   it('explains what each metric measures', () => {
     render(<HowItWorks />);
     // Fork Activity: mentions commits and 90 days
-    expect(screen.getByText(/non-merge commits over the last 90 days/i)).toBeInTheDocument();
-    // Community Vitality: mentions issue resolution
-    expect(screen.getByText(/issue resolution/i)).toBeInTheDocument();
-    // Ecosystem Diversity: mentions contributor support
-    expect(screen.getByText(/contributor support/i)).toBeInTheDocument();
-    // Evolutionary Freshness: mentions evolving forks
-    expect(screen.getByText(/fresh ones produce evolving forks/i)).toBeInTheDocument();
+    expect(screen.getByText(/non-merge commits on the default branch over the last 90 days/i)).toBeInTheDocument();
+    // Community Vitality: mentions issue close rate
+    expect(screen.getByText(/issue close rate/i)).toBeInTheDocument();
+    // Ecosystem Diversity: mentions contributor breadth
+    expect(screen.getByText(/contributor breadth/i)).toBeInTheDocument();
+    // Evolutionary Freshness: mentions recently updated
+    expect(screen.getByText(/how recently the project was updated/i)).toBeInTheDocument();
+  });
+
+  it('provides instructions on how to find each signal', () => {
+    render(<HowItWorks />);
+    // "How to find:" appears multiple times (once per metric)
+    const howToFind = screen.getAllByText(/how to find:/i);
+    expect(howToFind.length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText(/github → repo → commits/i)).toBeInTheDocument();
+    expect(screen.getByText(/github → repo → issues/i)).toBeInTheDocument();
   });
 
   it('mentions that scores are deterministic', () => {

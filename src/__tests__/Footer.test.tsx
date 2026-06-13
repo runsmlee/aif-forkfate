@@ -5,12 +5,12 @@ import { Footer } from '../components/Footer';
 describe('Footer', () => {
   it('renders the brand name', () => {
     render(<Footer />);
-    expect(screen.getByText('ForkFate')).toBeInTheDocument();
+    expect(screen.getByText('CommitCasualty')).toBeInTheDocument();
   });
 
   it('renders the tagline', () => {
     render(<Footer />);
-    expect(screen.getByText(/See Which Forks Survived/)).toBeInTheDocument();
+    expect(screen.getByText(/Open-Source Reliability Score/)).toBeInTheDocument();
   });
 
   it('has the contentinfo role for accessibility', () => {
@@ -18,18 +18,13 @@ describe('Footer', () => {
     expect(screen.getByRole('contentinfo')).toBeInTheDocument();
   });
 
-  it('mentions deterministic metrics', () => {
+  it('mentions deterministic scoring', () => {
     render(<Footer />);
-    expect(screen.getByText(/deterministic metrics/i)).toBeInTheDocument();
+    expect(screen.getByText(/deterministic/i)).toBeInTheDocument();
   });
 
-  it('mentions GitHub API data', () => {
+  it('mentions browser-based computation', () => {
     render(<Footer />);
-    expect(screen.getByText(/github api data/i)).toBeInTheDocument();
-  });
-
-  it('includes the disclaimer about results varying', () => {
-    render(<Footer />);
-    expect(screen.getByText(/results may vary/i)).toBeInTheDocument();
+    expect(screen.getByText(/runs entirely in your browser/i)).toBeInTheDocument();
   });
 });

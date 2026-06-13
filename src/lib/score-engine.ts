@@ -1,4 +1,4 @@
-// ForkFate — Deterministic fork survival scoring engine
+// CommitCasualty — Deterministic open-source reliability scoring engine
 import type {
   ReliabilityScore,
   ScoreBreakdown,
@@ -6,6 +6,7 @@ import type {
   GitHubRepo,
   GitHubContributor,
   GitHubIssue,
+  ManualSignals,
 } from './types';
 
 const MAX_PER_METRIC = 25;
@@ -225,6 +226,170 @@ export function computeReliabilityScore(params: {
     communityVitality: scoreIssueHealth(params.openIssues, params.closedIssues),
     ecosystemDiversity: scoreContributorDiversity(params.contributors),
     evolutionaryFreshness: scoreFreshness(params.repoData.pushed_at, params.latestRelease),
+  };
+
+  const total =
+    breakdown.forkActivity.score +
+    breakdown.communityVitality.score +
+    breakdown.ecosystemDiversity.score +
+    breakdown.evolutionaryFreshness.score;
+
+  return {
+    total,
+    grade: gradeFromTotal(total),
+    breakdown,
+  };
+}
+
+// ─── Manual signal scoring (no GitHub API required) ───
+
+function manualCommitActivity(count: number): MetricScore {
+  // Small-project threshold (no stargazer data available)
+  const threshold = 30;
+
+  let score: number;
+  let description: string;
+
+  if (count >= threshold) {
+    score = MAX_PER_METRIC;
+    description = `Excellent — ${count} commits in 90 days`;
+  } else if (count >= threshold * 0.5) {
+    score = MAX_PER_METRIC * 0.75;
+    description = `Good — ${count} commits in 90 days`;
+  } else if (count >= threshold * 0.2) {
+    score = MAX_PER_METRIC * 0.5;
+    description = `Moderate — ${count} commits in 90 days`;
+  } else if (count > 0) {
+    score = MAX_PER_METRIC * 0.25;
+    description = `Low — only ${count} commits in 90 days`;
+  } else {
+    score = 0;
+    description = 'No commits in the last 90 days';
+  }
+
+  return {
+    score: clampScore(score),
+    max: MAX_PER_METRIC,
+    label: 'Fork Activity',
+    description,
+  };
+}
+
+function manualIssueHealth(openCount: number, closedCount: number): MetricScore {
+  const total = openCount + closedCount;
+
+  let score: number;
+  let description: string;
+
+  if (total === 0) {
+    score = MAX_PER_METRIC * 0.7;
+    description = 'No issues tracked yet';
+  } else {
+    const closeRate = closedCount / total;
+
+    if (closeRate >= 0.85) {
+      score = MAX_PER_METRIC;
+      description = `Healthy — ${Math.round(closeRate * 100)}% issue close rate`;
+    } else if (closeRate >= 0.7) {
+      score = MAX_PER_METRIC * 0.8;
+      description = `Good — ${Math.round(closeRate * 100)}% issue close rate`;
+    } else if (closeRate >= 0.5) {
+      score = MAX_PER_METRIC * 0.6;
+      description = `Fair — ${Math.round(closeRate * 100)}% issue close rate`;
+    } else if (closeRate >= 0.3) {
+      score = MAX_PER_METRIC * 0.4;
+      description = `Concerning — ${Math.round(closeRate * 100)}% issue close rate`;
+    } else {
+      score = MAX_PER_METRIC * 0.2;
+      description = `Unhealthy — only ${Math.round(closeRate * 100)}% issue close rate`;
+    }
+  }
+
+  return {
+    score: clampScore(score),
+    max: MAX_PER_METRIC,
+    label: 'Community Vitality',
+    description,
+  };
+}
+
+function manualContributorDiversity(count: number): MetricScore {
+  let score: number;
+  let description: string;
+
+  if (count >= 50) {
+    score = MAX_PER_METRIC;
+    description = `Excellent — ${count} contributors`;
+  } else if (count >= 20) {
+    score = MAX_PER_METRIC * 0.85;
+    description = `Great — ${count} contributors`;
+  } else if (count >= 10) {
+    score = MAX_PER_METRIC * 0.7;
+    description = `Good — ${count} contributors`;
+  } else if (count >= 5) {
+    score = MAX_PER_METRIC * 0.5;
+    description = `Moderate — ${count} contributors`;
+  } else if (count >= 2) {
+    score = MAX_PER_METRIC * 0.3;
+    description = `Low — ${count} contributors`;
+  } else if (count === 1) {
+    score = MAX_PER_METRIC * 0.15;
+    description = 'Single contributor — bus factor risk';
+  } else {
+    score = 0;
+    description = 'No contributor data available';
+  }
+
+  return {
+    score: clampScore(score),
+    max: MAX_PER_METRIC,
+    label: 'Ecosystem Diversity',
+    description,
+  };
+}
+
+function manualFreshness(daysSince: number): MetricScore {
+  let score: number;
+  let description: string;
+
+  if (daysSince <= 1) {
+    score = MAX_PER_METRIC;
+    description = 'Updated today — very active';
+  } else if (daysSince <= 7) {
+    score = MAX_PER_METRIC * 0.9;
+    description = `Updated ${Math.round(daysSince)} days ago — active`;
+  } else if (daysSince <= 30) {
+    score = MAX_PER_METRIC * 0.75;
+    description = `Updated ${Math.round(daysSince)} days ago`;
+  } else if (daysSince <= 90) {
+    score = MAX_PER_METRIC * 0.5;
+    description = `Updated ${Math.round(daysSince)} days ago — slowing`;
+  } else if (daysSince <= 180) {
+    score = MAX_PER_METRIC * 0.3;
+    description = `Updated ${Math.round(daysSince)} days ago — stale`;
+  } else {
+    score = MAX_PER_METRIC * 0.1;
+    description = `Updated ${Math.round(daysSince)} days ago — very stale`;
+  }
+
+  return {
+    score: clampScore(score),
+    max: MAX_PER_METRIC,
+    label: 'Evolutionary Freshness',
+    description,
+  };
+}
+
+/**
+ * Compute a reliability score from 5 manually-entered signal values.
+ * Deterministic — no API calls, runs entirely in the browser.
+ */
+export function computeManualScore(signals: ManualSignals): ReliabilityScore {
+  const breakdown: ScoreBreakdown = {
+    forkActivity: manualCommitActivity(signals.commitsLast90Days),
+    communityVitality: manualIssueHealth(signals.openIssues, signals.closedIssues),
+    ecosystemDiversity: manualContributorDiversity(signals.contributors),
+    evolutionaryFreshness: manualFreshness(signals.daysSinceLastCommit),
   };
 
   const total =

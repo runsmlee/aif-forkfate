@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { computeReliabilityScore } from '../lib/score-engine';
-import type { GitHubRepo, GitHubContributor, GitHubIssue } from '../lib/types';
+import { computeReliabilityScore, computeManualScore } from '../lib/score-engine';
+import type { GitHubRepo, GitHubContributor, GitHubIssue, ManualSignals } from '../lib/types';
 
 const makeRepo = (overrides: Partial<GitHubRepo> = {}): GitHubRepo => ({
   id: 1,
@@ -200,6 +200,185 @@ describe('computeReliabilityScore', () => {
       latestRelease: { tag_name: 'v3.0', published_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString() },
     });
 
+    expect(grade).toBe('A+');
+  });
+});
+
+describe('computeManualScore', () => {
+  it('returns a score between 0 and 100', () => {
+    const signals: ManualSignals = {
+      commitsLast90Days: 45,
+      daysSinceLastCommit: 3,
+      openIssues: 12,
+      closedIssues: 50,
+      contributors: 8,
+    };
+    const score = computeManualScore(signals);
+    expect(score.total).toBeGreaterThanOrEqual(0);
+    expect(score.total).toBeLessThanOrEqual(100);
+    expect(score.grade).toBeDefined();
+  });
+
+  it('returns a valid grade letter', () => {
+    const signals: ManualSignals = {
+      commitsLast90Days: 45,
+      daysSinceLastCommit: 3,
+      openIssues: 12,
+      closedIssues: 50,
+      contributors: 8,
+    };
+    const { grade } = computeManualScore(signals);
+    expect(['A+', 'A', 'B', 'C', 'D', 'F']).toContain(grade);
+  });
+
+  it('scores low for inactive repo with zero signals', () => {
+    const signals: ManualSignals = {
+      commitsLast90Days: 0,
+      daysSinceLastCommit: 365,
+      openIssues: 50,
+      closedIssues: 2,
+      contributors: 0,
+    };
+    const score = computeManualScore(signals);
+    expect(score.total).toBeLessThan(30);
+  });
+
+  it('scores high for active healthy repo', () => {
+    const signals: ManualSignals = {
+      commitsLast90Days: 200,
+      daysSinceLastCommit: 1,
+      openIssues: 5,
+      closedIssues: 200,
+      contributors: 60,
+    };
+    const score = computeManualScore(signals);
+    expect(score.total).toBeGreaterThan(75);
+    expect(score.grade).toMatch(/^[AB]/);
+  });
+
+  it('computes all four breakdown metrics', () => {
+    const signals: ManualSignals = {
+      commitsLast90Days: 45,
+      daysSinceLastCommit: 3,
+      openIssues: 12,
+      closedIssues: 50,
+      contributors: 8,
+    };
+    const { breakdown } = computeManualScore(signals);
+
+    expect(breakdown.forkActivity).toBeDefined();
+    expect(breakdown.communityVitality).toBeDefined();
+    expect(breakdown.ecosystemDiversity).toBeDefined();
+    expect(breakdown.evolutionaryFreshness).toBeDefined();
+
+    for (const metric of Object.values(breakdown)) {
+      expect(metric.score).toBeGreaterThanOrEqual(0);
+      expect(metric.score).toBeLessThanOrEqual(25);
+      expect(metric.label).toBeTruthy();
+      expect(metric.description).toBeTruthy();
+    }
+  });
+
+  it('scores zero for fork activity with no commits', () => {
+    const signals: ManualSignals = {
+      commitsLast90Days: 0,
+      daysSinceLastCommit: 3,
+      openIssues: 12,
+      closedIssues: 50,
+      contributors: 8,
+    };
+    const { breakdown } = computeManualScore(signals);
+    expect(breakdown.forkActivity.score).toBe(0);
+    expect(breakdown.forkActivity.description).toContain('No commits');
+  });
+
+  it('scores zero for ecosystem diversity with no contributors', () => {
+    const signals: ManualSignals = {
+      commitsLast90Days: 45,
+      daysSinceLastCommit: 3,
+      openIssues: 12,
+      closedIssues: 50,
+      contributors: 0,
+    };
+    const { breakdown } = computeManualScore(signals);
+    expect(breakdown.ecosystemDiversity.score).toBe(0);
+  });
+
+  it('handles single contributor with bus factor warning', () => {
+    const signals: ManualSignals = {
+      commitsLast90Days: 20,
+      daysSinceLastCommit: 3,
+      openIssues: 5,
+      closedIssues: 20,
+      contributors: 1,
+    };
+    const { breakdown } = computeManualScore(signals);
+    expect(breakdown.ecosystemDiversity.description.toLowerCase()).toContain('single');
+    expect(breakdown.ecosystemDiversity.score).toBeLessThan(10);
+  });
+
+  it('computes issue close rate correctly', () => {
+    const signals: ManualSignals = {
+      commitsLast90Days: 30,
+      daysSinceLastCommit: 5,
+      openIssues: 10,
+      closedIssues: 90,
+      contributors: 15,
+    };
+    const { breakdown } = computeManualScore(signals);
+    expect(breakdown.communityVitality.description).toContain('90%');
+    expect(breakdown.communityVitality.score).toBe(25); // Max score for 90% close rate
+  });
+
+  it('penalizes stale repos in freshness metric', () => {
+    const signals: ManualSignals = {
+      commitsLast90Days: 0,
+      daysSinceLastCommit: 365,
+      openIssues: 5,
+      closedIssues: 20,
+      contributors: 3,
+    };
+    const { breakdown } = computeManualScore(signals);
+    expect(breakdown.evolutionaryFreshness.description.toLowerCase()).toContain('stale');
+    expect(breakdown.evolutionaryFreshness.score).toBeLessThanOrEqual(8);
+  });
+
+  it('rewards recent commits in freshness metric', () => {
+    const signals: ManualSignals = {
+      commitsLast90Days: 50,
+      daysSinceLastCommit: 0,
+      openIssues: 5,
+      closedIssues: 20,
+      contributors: 10,
+    };
+    const { breakdown } = computeManualScore(signals);
+    expect(breakdown.evolutionaryFreshness.score).toBe(25); // Max for 0 days
+  });
+
+  it('is deterministic — same inputs always produce same score', () => {
+    const signals: ManualSignals = {
+      commitsLast90Days: 45,
+      daysSinceLastCommit: 3,
+      openIssues: 12,
+      closedIssues: 50,
+      contributors: 8,
+    };
+    const score1 = computeManualScore(signals);
+    const score2 = computeManualScore(signals);
+    expect(score1.total).toBe(score2.total);
+    expect(score1.grade).toBe(score2.grade);
+  });
+
+  it('assigns A+ grade for total >= 90', () => {
+    const signals: ManualSignals = {
+      commitsLast90Days: 200,
+      daysSinceLastCommit: 0,
+      openIssues: 2,
+      closedIssues: 200,
+      contributors: 60,
+    };
+    const { grade, total } = computeManualScore(signals);
+    expect(total).toBeGreaterThanOrEqual(90);
     expect(grade).toBe('A+');
   });
 });

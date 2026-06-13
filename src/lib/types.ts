@@ -1,4 +1,4 @@
-// ForkFate — Types for fork survival analysis
+// CommitCasualty — Types for open-source reliability scoring
 
 export interface GitHubRepo {
   id: number;
@@ -78,6 +78,24 @@ export interface MetricScore {
 }
 
 export type AnalysisStatus = 'idle' | 'loading' | 'success' | 'error';
+
+/** Manual signal inputs for browser-based reliability scoring */
+export interface ManualSignals {
+  commitsLast90Days: number;
+  daysSinceLastCommit: number;
+  openIssues: number;
+  closedIssues: number;
+  contributors: number;
+}
+
+/** A saved manual analysis entry */
+export interface ManualAnalysis {
+  id: string;
+  signals: ManualSignals;
+  timestamp: string;
+  score: ReliabilityScore;
+  label: string; // user-provided repo name or auto-generated
+}
 
 export const EXAMPLE_REPOS = [
   'facebook/react',
