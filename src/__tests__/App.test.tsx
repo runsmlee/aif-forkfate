@@ -36,7 +36,7 @@ describe('App', () => {
     });
 
     // Metric breakdown should appear (appears in both Hero results and HowItWorks)
-    const headings = screen.getAllByRole('heading', { name: /fork activity/i });
+    const headings = screen.getAllByRole('heading', { name: /commit activity/i });
     expect(headings.length).toBeGreaterThanOrEqual(1);
   });
 

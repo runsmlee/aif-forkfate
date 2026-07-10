@@ -279,7 +279,7 @@ describe('computeManualScore', () => {
     }
   });
 
-  it('scores zero for fork activity with no commits', () => {
+  it('scores zero for commit activity with no commits', () => {
     const signals: ManualSignals = {
       commitsLast90Days: 0,
       daysSinceLastCommit: 3,

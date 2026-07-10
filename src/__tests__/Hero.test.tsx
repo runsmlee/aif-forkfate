@@ -58,7 +58,7 @@ describe('Hero', () => {
     const commitsInput = screen.getByLabelText(/commits \(last 90 days\)/i);
     await user.type(commitsInput, '45');
 
-    expect(screen.getByRole('heading', { name: /fork activity/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /commit activity/i })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /community vitality/i })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /ecosystem diversity/i })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /evolutionary freshness/i })).toBeInTheDocument();
@@ -93,6 +93,19 @@ describe('Hero', () => {
 
     // After reset, the empty state should show again
     expect(screen.getByText(/enter at least one signal/i)).toBeInTheDocument();
+  });
+
+  it('displays reliability band label (Critical/Warning/Healthy) when score is shown', async () => {
+    const user = userEvent.setup();
+    render(<Hero />);
+
+    const commitsInput = screen.getByLabelText(/commits \(last 90 days\)/i);
+    await user.type(commitsInput, '100');
+
+    // A high commit count should produce a score with a visible reliability band
+    const band = screen.getByLabelText(/reliability band:/i);
+    expect(band).toBeInTheDocument();
+    expect(band.textContent).toMatch(/Healthy|Warning|Critical/);
   });
 
   it('renders hint text for each signal input', () => {

@@ -10,7 +10,7 @@ describe('HowItWorks', () => {
 
   it('describes all four scoring metrics', () => {
     render(<HowItWorks />);
-    expect(screen.getByText('Fork Activity')).toBeInTheDocument();
+    expect(screen.getByText('Commit Activity')).toBeInTheDocument();
     expect(screen.getByText('Community Vitality')).toBeInTheDocument();
     expect(screen.getByText('Ecosystem Diversity')).toBeInTheDocument();
     expect(screen.getByText('Evolutionary Freshness')).toBeInTheDocument();
@@ -18,7 +18,7 @@ describe('HowItWorks', () => {
 
   it('explains what each metric measures', () => {
     render(<HowItWorks />);
-    // Fork Activity: mentions commits and 90 days
+    // Commit Activity: mentions commits and 90 days
     expect(screen.getByText(/non-merge commits on the default branch over the last 90 days/i)).toBeInTheDocument();
     // Community Vitality: mentions issue close rate
     expect(screen.getByText(/issue close rate/i)).toBeInTheDocument();

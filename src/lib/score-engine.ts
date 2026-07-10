@@ -55,7 +55,7 @@ function scoreCommitActivity(commitCount: number, stargazers: number): MetricSco
   return {
     score: clampScore(score),
     max: MAX_PER_METRIC,
-    label: 'Fork Activity',
+    label: 'Commit Activity',
     description,
   };
 }
@@ -270,7 +270,7 @@ function manualCommitActivity(count: number): MetricScore {
   return {
     score: clampScore(score),
     max: MAX_PER_METRIC,
-    label: 'Fork Activity',
+    label: 'Commit Activity',
     description,
   };
 }

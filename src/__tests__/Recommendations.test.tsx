@@ -5,7 +5,7 @@ import type { ScoreBreakdown } from '../lib/types';
 
 function makeBreakdown(overrides: Partial<ScoreBreakdown> = {}): ScoreBreakdown {
   return {
-    forkActivity: { score: 22, max: 25, label: 'Fork Activity', description: 'Excellent' },
+    forkActivity: { score: 22, max: 25, label: 'Commit Activity', description: 'Excellent' },
     communityVitality: { score: 22, max: 25, label: 'Community Vitality', description: 'Excellent' },
     ecosystemDiversity: { score: 22, max: 25, label: 'Ecosystem Diversity', description: 'Excellent' },
     evolutionaryFreshness: { score: 22, max: 25, label: 'Evolutionary Freshness', description: 'Excellent' },
@@ -21,19 +21,19 @@ describe('Recommendations', () => {
 
   it('shows a positive message when all scores are high', () => {
     render(<Recommendations breakdown={makeBreakdown()} />);
-    expect(screen.getByText(/fork survival potential/i)).toBeInTheDocument();
+    expect(screen.getByText(/reliability signals/i)).toBeInTheDocument();
   });
 
-  it('shows a critical recommendation when fork activity is very low', () => {
+  it('shows a critical recommendation when commit activity is very low', () => {
     render(
       <Recommendations
         breakdown={makeBreakdown({
-          forkActivity: { score: 0, max: 25, label: 'Fork Activity', description: 'No commits' },
+          forkActivity: { score: 0, max: 25, label: 'Commit Activity', description: 'No commits' },
         })}
       />
     );
-    expect(screen.getByText(/Fork Activity/i)).toBeInTheDocument();
-    expect(screen.getByText(/forks of this project are likely dead/i)).toBeInTheDocument();
+    expect(screen.getByText(/Commit Activity/i)).toBeInTheDocument();
+    expect(screen.getByText(/this project may be abandoned/i)).toBeInTheDocument();
   });
 
   it('shows a warning when community vitality is low', () => {
@@ -86,12 +86,12 @@ describe('Recommendations', () => {
     render(
       <Recommendations
         breakdown={makeBreakdown({
-          forkActivity: { score: 2, max: 25, label: 'Fork Activity', description: 'Very low' },
+          forkActivity: { score: 2, max: 25, label: 'Commit Activity', description: 'Very low' },
           evolutionaryFreshness: { score: 3, max: 25, label: 'Evolutionary Freshness', description: 'Stale' },
         })}
       />
     );
-    expect(screen.getByText(/Fork Activity/i)).toBeInTheDocument();
+    expect(screen.getByText(/Commit Activity/i)).toBeInTheDocument();
     expect(screen.getByText(/Evolutionary Freshness/i)).toBeInTheDocument();
   });
 
@@ -104,7 +104,7 @@ describe('Recommendations', () => {
     const { container } = render(
       <Recommendations
         breakdown={makeBreakdown({
-          forkActivity: { score: 0, max: 25, label: 'Fork Activity', description: 'None' },
+          forkActivity: { score: 0, max: 25, label: 'Commit Activity', description: 'None' },
         })}
       />
     );

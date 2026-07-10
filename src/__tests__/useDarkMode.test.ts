@@ -15,19 +15,19 @@ describe('useDarkMode', () => {
   });
 
   it('reads stored preference from localStorage', () => {
-    localStorage.setItem('forkfate_darkmode', 'true');
+    localStorage.setItem('commitcasualty_darkmode', 'true');
     const { result } = renderHook(() => useDarkMode());
     expect(result.current[0]).toBe(true);
   });
 
   it('adds dark class to document when dark mode is enabled', () => {
-    localStorage.setItem('forkfate_darkmode', 'true');
+    localStorage.setItem('commitcasualty_darkmode', 'true');
     renderHook(() => useDarkMode());
     expect(document.documentElement.classList.contains('dark')).toBe(true);
   });
 
   it('removes dark class when toggled off', () => {
-    localStorage.setItem('forkfate_darkmode', 'true');
+    localStorage.setItem('commitcasualty_darkmode', 'true');
     const { result } = renderHook(() => useDarkMode());
     expect(document.documentElement.classList.contains('dark')).toBe(true);
 
@@ -47,7 +47,7 @@ describe('useDarkMode', () => {
       result.current[1](); // toggle on
     });
 
-    expect(localStorage.getItem('forkfate_darkmode')).toBe('true');
+    expect(localStorage.getItem('commitcasualty_darkmode')).toBe('true');
     expect(result.current[0]).toBe(true);
   });
 });

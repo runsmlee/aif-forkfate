@@ -9,7 +9,7 @@ function buildShareText(analysis: RepoAnalysis): string {
   const { repo, score } = analysis;
   const url = `${window.location.origin}${window.location.pathname}#${repo}`;
   const lines = [
-    `${repo} — Fork Survival Score: ${score.total}/100 (${score.grade})`,
+    `${repo} — Reliability Score: ${score.total}/100 (${score.grade})`,
     '',
     ...Object.values(score.breakdown).map(
       (m) => `${m.label}: ${m.score}/${m.max}`
@@ -28,7 +28,7 @@ export function ShareButton({ analysis }: ShareButtonProps): JSX.Element {
 
     if (navigator.share) {
       try {
-        await navigator.share({ title: `${analysis.repo} fork survival`, text });
+        await navigator.share({ title: `${analysis.repo} reliability score`, text });
         return;
       } catch {
         // User cancelled or share failed — fall back to clipboard

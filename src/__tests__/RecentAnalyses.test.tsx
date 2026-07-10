@@ -19,7 +19,7 @@ function makeAnalysis(overrides: Partial<ManualAnalysis> = {}): ManualAnalysis {
       total: 75,
       grade: 'A',
       breakdown: {
-        forkActivity: { score: 20, max: 25, label: 'Fork Activity', description: 'Good' },
+        forkActivity: { score: 20, max: 25, label: 'Commit Activity', description: 'Good' },
         communityVitality: { score: 18, max: 25, label: 'Community Vitality', description: 'Good' },
         ecosystemDiversity: { score: 20, max: 25, label: 'Ecosystem Diversity', description: 'Good' },
         evolutionaryFreshness: { score: 17, max: 25, label: 'Evolutionary Freshness', description: 'Good' },

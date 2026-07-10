@@ -3,7 +3,7 @@ import { memo } from 'react';
 const SIGNALS = [
   {
     icon: '🔥',
-    title: 'Fork Activity',
+    title: 'Commit Activity',
     description:
       'Counts non-merge commits on the default branch over the last 90 days. Active projects sustain healthier ecosystems.',
     maxScore: 25,
@@ -29,7 +29,7 @@ const SIGNALS = [
     icon: '🕐',
     title: 'Evolutionary Freshness',
     description:
-      'Checks how recently the project was updated. Stale projects produce dead forks; fresh ones keep evolving.',
+      'Checks how recently the project was updated. Stale projects accumulate risk; fresh ones keep evolving.',
     maxScore: 25,
     howToFind: 'GitHub → repo → check the "last commit" date, calculate days since',
   },

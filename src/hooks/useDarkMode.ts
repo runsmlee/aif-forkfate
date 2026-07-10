@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 
-const STORAGE_KEY = 'forkfate_darkmode';
+const STORAGE_KEY = 'commitcasualty_darkmode';
 
 function getInitialPreference(): boolean {
   try {

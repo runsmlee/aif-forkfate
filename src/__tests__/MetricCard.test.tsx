@@ -4,8 +4,8 @@ import { MetricCard } from '../components/MetricCard';
 
 describe('MetricCard', () => {
   it('renders the label and score', () => {
-    render(<MetricCard label="Fork Activity" score={20} max={25} description="Good activity" icon="🔥" />);
-    expect(screen.getByText('Fork Activity')).toBeInTheDocument();
+    render(<MetricCard label="Commit Activity" score={20} max={25} description="Good activity" icon="🔥" />);
+    expect(screen.getByText('Commit Activity')).toBeInTheDocument();
     expect(screen.getByText('20/25')).toBeInTheDocument();
   });
 

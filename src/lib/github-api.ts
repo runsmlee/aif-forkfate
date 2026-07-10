@@ -1,4 +1,4 @@
-// ForkFate — GitHub API integration
+// CommitCasualty — GitHub API integration
 import type {
   GitHubRepo,
   GitHubCommit,

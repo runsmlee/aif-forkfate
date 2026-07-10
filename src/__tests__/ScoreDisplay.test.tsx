@@ -21,7 +21,7 @@ describe('ScoreDisplay (via Hero integration)', () => {
     const commitsInput = screen.getByLabelText(/commits \(last 90 days\)/i);
     await user.type(commitsInput, '45');
 
-    expect(screen.getByRole('heading', { name: 'Fork Activity' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Commit Activity' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Community Vitality' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Ecosystem Diversity' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Evolutionary Freshness' })).toBeInTheDocument();

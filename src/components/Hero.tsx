@@ -60,6 +60,30 @@ const SIGNAL_FIELDS: SignalField[] = [
 
 const METRIC_ICONS = ['🔥', '🐛', '👥', '🕐'];
 
+type ReliabilityBand = {
+  label: string;
+  className: string;
+};
+
+function getReliabilityBand(total: number): ReliabilityBand {
+  if (total >= 55) {
+    return {
+      label: 'Healthy',
+      className: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400',
+    };
+  }
+  if (total >= 20) {
+    return {
+      label: 'Warning',
+      className: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400',
+    };
+  }
+  return {
+    label: 'Critical',
+    className: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400',
+  };
+}
+
 const EMPTY_SIGNALS: ManualSignals = {
   commitsLast90Days: 0,
   daysSinceLastCommit: 0,
@@ -219,6 +243,12 @@ export function Hero({ onScoreComputed, initialSignals }: HeroProps): JSX.Elemen
                   {score.grade}
                 </span>
                 <LiveScoreCounter total={score.total} />
+                <span
+                  className={`mt-2 inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${getReliabilityBand(score.total).className}`}
+                  aria-label={`Reliability band: ${getReliabilityBand(score.total).label}`}
+                >
+                  {getReliabilityBand(score.total).label}
+                </span>
               </div>
             </div>
 
